@@ -1,0 +1,7 @@
+<p>game works!</p>
+<div class="gameBox">
+	<div class="line" *ngFor="let row of terrain; let indexRow = index;" >
+		<div class="block color-{{column}}" *ngFor="let column of row; let indexColumn = index;"> {{terrain[indexRow][indexColumn]}} {{column}}</div>
+	</div>
+
+</div>

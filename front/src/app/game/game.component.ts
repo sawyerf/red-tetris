@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import * as pieces from './tetrimos.json';
+import pieces from './tetrimos.json';
 
 @Component({
   selector: 'app-game',
@@ -11,14 +11,27 @@ export class GameComponent implements OnInit {
   terrain: Terrain = new Terrain();
   tetrimo: Tetrimino = new Tetrimino();
   intervalId: NodeJS.Timer = setInterval(() => {}, 1000);
+  isStart: boolean = false;
 
   constructor() {
+    document.body.addEventListener('keydown', (event) => {
+      console.log(event)
+      if (event.key == ' ') return this.startGame();
+      if (this.isStart) {
+        if (event.key == 'ArrowDown') return this.fallPiece(this.tetrimo);
+        if (event.key == 'ArrowUp') return this.rotatePiece(this.tetrimo);
+        if (event.key == 'ArrowRight') return this.rightPiece(this.tetrimo);
+        if (event.key == 'ArrowLeft') return this.leftPiece(this.tetrimo);
+      }
+    });
+
   }
 
   startGame(): void {
     this.terrain = new Terrain();
     this.tetrimo = new Tetrimino();
     clearInterval(this.intervalId);
+    this.isStart = true;
     this.intervalId = setInterval(() => { this.fallPiece(this.tetrimo) }, 750);
   }
 
@@ -29,6 +42,7 @@ export class GameComponent implements OnInit {
       this.terrain.delFullLine();
       this.tetrimo = new Tetrimino();
       if (this.terrain.isPossible(this.tetrimo) == false) {
+        this.isStart = false;
         clearInterval(this.intervalId);
       }
       return ;
@@ -156,7 +170,7 @@ class Terrain {
       let lenColumn: number = piece[indexRow].length;
       for (let indexColumn = 0; indexColumn < len; indexColumn++) {
         if (piece[indexRow][indexColumn]) {
-          this.terrain[tetrimo.y + indexRow][tetrimo.x + indexColumn] = piece[indexRow][indexColumn];
+          this.terrain[tetrimo.y + indexRow][tetrimo.x + indexColumn] = tetrimo.indexPiece + 1;
         }
       }
     }
@@ -199,6 +213,7 @@ class Tetrimino {
   }
 
   constructor() {
-    this.indexPiece = Math.floor(Math.random() * 3);
+    this.indexPiece = Math.floor(Math.random() * pieces.length);
+    console.log(this.indexPiece);
   }
 }

@@ -1,11 +1,11 @@
-$size_block: 10px;
-$margin_block: 1px;
+$size_block: 30px;
+$margin_block: 0.5px;
 
 
 .gameBox {
 	display: flex;
 	flex-wrap: wrap;
-	width: ($size_block + $margin_block) * 11;
+	width: ($size_block + $margin_block) * 10;
 	height: ($size_block + $margin_block) * 21;
 }
 
@@ -28,5 +28,33 @@ $margin_block: 1px;
 }
 
 .color-1 {
+	background-color: lightblue;
+}
+
+.color-2 {
+	background-color: blue;
+}
+
+.color-3 {
+	background-color: orange;
+}
+
+.color-4 {
+	background-color: yellow;
+}
+
+.color-5 {
+	background-color: green;
+}
+
+.color-6 {
+	background-color: purple;
+}
+
+.color-7 {
 	background-color: red;
+}
+
+.border-game {
+	background-color: #2b075c;
 }

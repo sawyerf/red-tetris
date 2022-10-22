@@ -1,7 +1,14 @@
 <p>game works!</p>
-<div class="gameBox">
-	<div class="line" *ngFor="let row of terrain; let indexRow = index;" >
-		<div class="block color-{{column}}" *ngFor="let column of row; let indexColumn = index;"> {{terrain[indexRow][indexColumn]}} {{column}}</div>
+<div class="gameBox"
+	(keydown.ArrowDown)="fallPiece(tetrimo)"
+	(keydown.ArrowRight)="rightPiece(tetrimo)"
+	(keydown.ArrowLeft)="leftPiece(tetrimo)"
+	(keydown.ArrowUp)="rotatePiece(tetrimo)">
+	<div class="line" *ngFor="let row of terrain.terrain; let indexRow = index;" >
+		<div class="block color-{{column}}" *ngFor="let column of row; let indexColumn = index;">{{indexRow}}</div>
 	</div>
-
+	<button (click)="startGame()">Start</button>
+	<button (click)="terrain.terrain[19].fill(1)">lol</button>
+	<button (click)="terrain.terrain[18].fill(1)">lol</button>
+	<input />
 </div>

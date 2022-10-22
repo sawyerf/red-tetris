@@ -1,9 +1,6 @@
 <p>game works!</p>
-<div class="gameBox"
-	(keydown.ArrowDown)="fallPiece(tetrimo)"
-	(keydown.ArrowRight)="rightPiece(tetrimo)"
-	(keydown.ArrowLeft)="leftPiece(tetrimo)"
-	(keydown.ArrowUp)="rotatePiece(tetrimo)">
+<p>Score: {{score}}</p>
+<div class="gameBox">
 	<div style="background-color: grey">
 		<div class="line">
 			<div class="block border-game"></div>
@@ -21,8 +18,15 @@
 			<div class="block border-game"></div>
 		</div>
 	</div>
-	<button (click)="startGame()">Start</button>
-	<button (click)="terrain.terrain[19].fill(1)">lol</button>
-	<button (click)="terrain.terrain[18].fill(1)">lol</button>
-	<input />
+
+	<!-- <div *ngFor="let nextTetrimo of nextTetrimos" >
+		<div class="line" *ngFor="let row of nextTetrimo.get()" >
+			<div class="block border-game"></div>
+			<div class="block color-{{(nextTetrimo.indexPiece + 1) * column}}" *ngFor="let column of row"></div>
+			<div class="block border-game"></div>
+		</div>
+	</div> -->
+
+	<button (click)="terrain.terrain[19].fill(1)">Line 1</button>
+	<button (click)="terrain.terrain[18].fill(1)">Line 2</button>
 </div>

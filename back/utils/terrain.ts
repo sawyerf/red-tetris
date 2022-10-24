@@ -1,4 +1,4 @@
-import Tetrimino from './tetrimino';
+import Tetrimino from './Tetrimino';
 
 class Terrain {
 	sizeColumn: number = 0;

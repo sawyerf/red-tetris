@@ -1,5 +1,7 @@
-import Terrain from './terrain';
-import Tetrimino from './tetrimino';
+import { threadId } from 'worker_threads';
+import Terrain from './Terrain';
+import Tetrimino from './Tetrimino';
+import type { Socket } from 'socket.io';
 
 class Room {
 	terrain: Terrain = new Terrain(20, 10);
@@ -8,19 +10,7 @@ class Room {
 	score: number = 0;
 	isStart: boolean = false;
 
-	constructor() {
-		document.body.addEventListener('keydown', (event) => {
-			console.log(event)
-			if (event.key == 'Enter') return this.startGame();
-			if (this.isStart) {
-				if (event.key == 'ArrowDown') return this.fallPiece(this.tetrimo);
-				if (event.key == 'ArrowUp') return this.rotatePiece(this.tetrimo);
-				if (event.key == 'ArrowRight') return this.rightPiece(this.tetrimo);
-				if (event.key == 'ArrowLeft') return this.leftPiece(this.tetrimo);
-				if (event.key == ' ') return this.rotateVerticalyPiece(this.tetrimo);
-			}
-		});
-	}
+	constructor() { }
 
 	startGame(): void {
 		this.terrain = new Terrain(20, 10);

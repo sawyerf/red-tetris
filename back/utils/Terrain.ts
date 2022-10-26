@@ -26,7 +26,6 @@ class Terrain {
 		let score: number = 0;
 
 		for (let indexRow = lenRow - 1; indexRow >= 0; indexRow--) {
-			console.log(this.terrain[indexRow].every((block) => block == 1));
 			if (this.terrain[indexRow].every((block) => block)) {
 				let newRow = new Array(this.sizeColumn);
 				score++;

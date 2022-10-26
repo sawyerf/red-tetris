@@ -39,7 +39,7 @@ class Tetrimino {
 
 	constructor() {
 		this.indexPiece = Math.floor(Math.random() * pieces.length);
-		console.log(this.indexPiece);
+		console.log('Piece:', this.indexPiece);
 	}
 }
 

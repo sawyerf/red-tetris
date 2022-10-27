@@ -42,24 +42,16 @@ const createTerrain = (column: number, row: number): number[][] => {
 const terrain: Ref<number[][]> = ref(createTerrain(10, 20));
 const io = connectSocket();
 
-io.on('terrain', (data) => {
-	// for (let indexRow = 0; indexRow < terrain.value.length; indexRow++) {
-	// 	for (let indexColumn = 0; indexColumn < terrain.value[indexRow].length; indexColumn++) {
-	// 		if (terrain.value[indexRow][indexColumn] != data.terrain[indexRow][indexColumn]) {
-	// 			console.log(indexColumn, indexRow);
-	// 			terrain.value[indexRow][indexColumn] = data.terrain[indexRow][indexColumn];
-	// 		}
-	// 	}
-	// }
+io.on('game/terrain', (data) => {
 	terrain.value = data.terrain;
 });
 
 document.body.addEventListener('keydown', (event) => {
-	// console.log(event);
 	if (['Enter',  'ArrowDown',  'ArrowUp',  'ArrowRight',  'ArrowLeft',  ' '].indexOf(event.key) > -1) {
-		io.emit('key', { key: event.key });
+		io.emit('game/key', { key: event.key });
 		console.log('key');
 	}
+	if (event.key == 'a') io.emit('room/create');
 });
 
 </script>

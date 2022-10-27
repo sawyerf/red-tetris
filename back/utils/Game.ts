@@ -1,7 +1,8 @@
 import { threadId } from 'worker_threads';
 import Terrain from './Terrain';
 import Tetrimino from './Tetrimino';
-import type { Socket } from 'socket.io';
+import type { BroadcastOperator } from 'socket.io';
+import { cp } from 'fs';
 
 class Game {
 	terrain: Terrain = new Terrain(20, 10);
@@ -9,9 +10,9 @@ class Game {
 	intervalId: NodeJS.Timer = setInterval(() => { }, 1000);
 	score: number = 0;
 	isStart: boolean = false;
-	socket: Socket;
+	socket: BroadcastOperator<any, any>;
 
-	constructor(socket: Socket) {
+	constructor(socket: BroadcastOperator<any, any>) {
 		this.socket = socket;
 	}
 
@@ -27,7 +28,7 @@ class Game {
 
 	sendTerrain(): void {
 		this.terrain.putPiece(this.tetrimo);
-		this.socket.emit('terrain', {terrain: this.terrain.terrain});
+		this.socket.emit('game/terrain', {terrain: this.terrain.terrain});
 		this.terrain.delPiece(this.tetrimo);
 	}
 

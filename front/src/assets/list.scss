@@ -1,0 +1,43 @@
+$width-list: 40vw;
+$height-list: 50vh;
+$height-item: calc($height-list / 10);
+
+ul {
+	background: rgb(15,76,159);
+	background: linear-gradient(180deg, rgba(15,76,159,1) 0%, rgba(119,197,231,1) 100%);
+	border: 5px solid #EF3F2C;
+	border-radius: 10px;
+	list-style-type: none;
+	width: $width-list;
+	height: $height-list;
+	margin: auto;
+	padding: 15px;
+}
+
+.room-item {
+	display: flex;
+	flex-direction: row;
+	width: auto;
+	height: $height-item;
+	margin-bottom: 10px;
+	// background-color: #f15c4c;
+	// border: 5px solid #84c53c;
+	background-color: rgba(0, 0, 0, 0.1);
+}
+
+.room-name, .room-player {
+	font-family: "Pixel Gosub";
+	font-size: 20px;
+	color: #f15c4c;
+	margin:  auto 10px auto 10px;
+	// background-color: blue;
+}
+
+.room-name {
+	flex: 1;
+}
+
+.room-player {
+	flex: 1;
+	text-align-last: right;
+}

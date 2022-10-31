@@ -1,7 +1,6 @@
 <template>
-	<p>list</p>
 	<ul>
-		<li class="room-item" v-for="(room, index) in listRoom" v-bind:key="index">
+		<li v-on:click="() => joinHandle(room.uid)" class="room-item" v-for="(room, index) in listRoom" v-bind:key="index">
 			<p class="room-name">{{room.name}}</p> <p class="room-player">{{room.numberPlayer}}/{{room.maxPlayer}}</p>
 		</li>
 	</ul>
@@ -14,6 +13,12 @@ import { ref } from 'vue';
 const io = connectSocket();
 const listRoom = ref();
 
+const joinHandle = (room: {roomId: number}) => {
+	console.log('?', room);
+	io.emit('room/join', {roomId: room})
+}
+
+io.emit('room/list');
 io.on('room/list', (data) => {
 	listRoom.value = data.rooms;
 });

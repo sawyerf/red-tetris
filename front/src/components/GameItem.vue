@@ -1,6 +1,9 @@
 <template>
-	<div class="gameBox">
-    <!-- <div style="background-color: grey"> -->
+	<div class="gameBox"
+		:style="{
+			width: sizeBlock * 12 + 'px',
+			height: sizeBlock * 20 + 'px'
+		}">
 		<div class="line" v-if="isBorder">
 			<div class="block border-game"></div>
 			<div class="block border-game" v-for="(_, index) in terrain[0]" v-bind:key="index"></div>
@@ -24,6 +27,7 @@
 <script setup lang="ts">
 defineProps<{
 	terrain: number[][],
-	isBorder: boolean
+	isBorder: boolean,
+	sizeBlock: number,
 }>();
 </script>

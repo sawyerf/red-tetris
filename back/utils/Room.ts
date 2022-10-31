@@ -1,6 +1,8 @@
-import type { BroadcastOperator, Server } from "socket.io";
+import type { BroadcastOperator, Server, Socket } from "socket.io";
 import Game from "./Game";
 import { v4 } from 'uuid';
+import { threadId } from "worker_threads";
+import { TokenPayload } from "../socket";
 
 type Params = {
 	sizeRow: number,
@@ -40,18 +42,29 @@ class Room {
 	}
 
 	start() {
-		for (let game of this.games) {
-			game.startGame();
+		if (this.games.every((item) => !item.isStart)) {
+			for (let game of this.games) {
+				game.startGame();
+			}
+			this.isStart = true;
 		}
-		this.isStart = true;
 	}
 
-	addPlayer(): number {
+	addPlayer(socketMe: Socket, infoPlayer: TokenPayload): number {
 		if (this.games.length >= this.params.maxPlayer || this.isStart) return -1;
-		const game = new Game(this.socket);
+		const game = new Game(this.socket, socketMe, infoPlayer);
 		const indexPlayer =  this.games.push(game) - 1;
 		console.log('new Player: ', indexPlayer);
 		return indexPlayer;
+	}
+
+	updatePlayer(player:number, socketMe: Socket) {
+		this.games[player].socketMe = socketMe;
+	}
+
+	leave(player:number) {
+		this.games[player].stopGame();
+		this.games[player].socketMe.leave(this.uid);
 	}
 
 	key(player: number, key: string) {

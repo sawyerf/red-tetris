@@ -28,6 +28,14 @@ const io: ServerIO = new ServerIO(server, {
 
 global.io = io;
 console.log('Start Socket');
+
+const listSocket: string[] = [];
+
 io.on('connection', (socket: Socket) => {
+    if (listSocket.indexOf(socket.id) > 0) {
+        return ;
+    }
     const socketG = new SocketGame(io, socket);
+    listSocket.push(socket.id)
+    io.on('disconnect', () => listSocket.splice(listSocket.indexOf(socket.id), 1));
 });

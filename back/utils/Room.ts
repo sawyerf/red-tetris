@@ -3,6 +3,7 @@ import Game from "./Game";
 import { v4 } from 'uuid';
 import { threadId } from "worker_threads";
 import { TokenPayload } from "../socket";
+import Tetrimino from "./Tetrimino";
 
 type Params = {
 	sizeRow: number,
@@ -15,7 +16,7 @@ class Room {
 	name: string;
 	games: Game[] = [];
 	isStart: boolean = false;
-	params: Params = {sizeRow: 20, sizeColumn: 10, maxPlayer: 3};
+	params: Params = {sizeRow: 20, sizeColumn: 10, maxPlayer: 6};
 	winner: Game | undefined;
 	socket: BroadcastOperator<any, any>;
 
@@ -43,8 +44,9 @@ class Room {
 
 	start() {
 		if (this.games.every((item) => !item.isStart)) {
+			const seed = Math.random()
 			for (let game of this.games) {
-				game.startGame();
+				game.startGame(seed);
 			}
 			this.isStart = true;
 		}
@@ -68,7 +70,7 @@ class Room {
 	}
 
 	key(player: number, key: string) {
-		console.log('key: ', key, ', player: ', player);
+		// console.log('key: ', key, ', player: ', player);
 		if (!player && key == 'Enter') this.start();
 		if (this.isStart) {
 			if (key == 'ArrowDown') this.games[player].fallPiece();

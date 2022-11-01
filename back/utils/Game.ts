@@ -7,11 +7,12 @@ import { TokenPayload } from '../socket';
 
 class Game {
 	terrain: Terrain = new Terrain(20, 10);
-	tetrimo: Tetrimino = new Tetrimino();
+	tetrimo: Tetrimino = new Tetrimino(0);
+	nextTetrimo: Tetrimino = new Tetrimino(0);
 	isStart: boolean = false;
 	score: number = 0;
 	infoPlayer: TokenPayload;
-	intervalId: NodeJS.Timer = setInterval(() => { }, 1000);
+	intervalId: NodeJS.Timer = setInterval(() => { }, 200);
 	// Socket
 	socket: BroadcastOperator<any, any>;
 	socketMe: Socket;
@@ -22,14 +23,16 @@ class Game {
 		this.infoPlayer = infoPlayer;
 	}
 
-	startGame(): void {
+	startGame(seed: number): void {
 		this.terrain = new Terrain(20, 10);
-		this.tetrimo = new Tetrimino();
+		this.tetrimo = new Tetrimino(seed);
+		this.nextTetrimo = new Tetrimino(this.tetrimo.seed);
 		this.score = 0;
 		clearInterval(this.intervalId);
 		this.isStart = true;
 		this.intervalId = setInterval(() => { this.fallPiece() }, 750);
 		this.sendTerrainEveryone();
+		this.sendPiece();
 	}
 
 	stopGame() {
@@ -39,29 +42,37 @@ class Game {
 
 	sendTerrainEveryone(): void {
 		this.terrain.putPiece(this.tetrimo);
-		this.socket.emit('game/terrain', {
+		this.socket.emit('game/oponent', {
 			username: this.infoPlayer.username,
 			idPlayer: this.infoPlayer.indexPlayer,
-			terrain: this.terrain.terrain
+			terrain: this.terrain.terrain,
+			score: this.score,
 		});
 		this.terrain.delPiece(this.tetrimo);
+		this.sendTerrainMe();
 	}
 
 	sendTerrainMe(): void {
 		this.terrain.putPiece(this.tetrimo);
 		this.socketMe.emit('game/terrain', {
-			username: this.infoPlayer.username,
-			idPlayer: this.infoPlayer.indexPlayer,
-			terrain: this.terrain.terrain
+			terrain: this.terrain.terrain,
+			score: this.score,
 		});
 		this.terrain.delPiece(this.tetrimo);
 	}
 
+	sendPiece(): void {
+		this.socketMe.emit('game/pieces', {currentPiece: this.tetrimo.get(), nextPiece: this.nextTetrimo.get()})
+	}
+
 	fallPiece(): void {
+		if (!this.isStart) return ;
 		if (this.terrain.isOnFloor(this.tetrimo)) { // Piece is on the floor
 			this.terrain.putPiece(this.tetrimo);
 			this.score += this.terrain.delFullLine();
-			this.tetrimo = new Tetrimino();
+			this.tetrimo.newPiece();
+			this.nextTetrimo.newPiece();
+			this.sendPiece();
 			if (this.terrain.isPossible(this.tetrimo) == false) {
 				this.stopGame();
 			} else {

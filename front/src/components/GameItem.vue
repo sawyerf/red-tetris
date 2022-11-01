@@ -1,8 +1,8 @@
 <template>
 	<div class="gameBox"
 		:style="{
-			width: sizeBlock * 12 + 'px',
-			height: sizeBlock * 20 + 'px'
+			width: sizeWidth,
+			height: sizeHeight,
 		}">
 		<div class="line" v-if="isBorder">
 			<div class="block border-game"></div>
@@ -28,6 +28,7 @@
 defineProps<{
 	terrain: number[][],
 	isBorder: boolean,
-	sizeBlock: number,
+	sizeWidth: string,
+	sizeHeight: string,
 }>();
 </script>

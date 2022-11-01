@@ -2,7 +2,7 @@
 	<div class="home-main">
 		<img class="logo" src="https://static.wikia.nocookie.net/logopedia/images/f/f8/Tetris_1997.svg" alt="logo" />
 		<ListRoom></ListRoom>
-		<input class="input-name" :value="roomName" @input="(event) => roomName = event.target.value" v-on:keyup.enter="onEnterRoom" />
+		<input class="input-name" placeholder="Create Room" :value="roomName" @input="(event) => roomName = event.target.value" v-on:keyup.enter="onEnterRoom" />
 	</div>
 </template>
 

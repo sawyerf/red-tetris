@@ -48,7 +48,7 @@ class SocketGame {
 	}
 
 	sendListRooms () {
-		const roomsList = rooms.map((room) => {
+		const roomsList = rooms.filter((room) => !room.isStart).map((room) => {
 			return {
 				name: room.name,
 				uid: room.uid,
@@ -106,6 +106,7 @@ class SocketGame {
 	RoomHandle() {
 		if (this.handleActivated.indexOf('RoomHandle') > -1) return ;
 		this.handleActivated.push('RoomHandle');
+		console.log('RoomHandle');
 
 		this.sendListRooms();
 		this.socket.on('room/list', () => this.sendListRooms());
@@ -134,6 +135,7 @@ class SocketGame {
 					this.GameHandle();
 				}
 			}
+			this.sendListRooms();
 		});
 
 		this.socket.on('room/leave', () => {

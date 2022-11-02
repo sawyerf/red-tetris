@@ -4,8 +4,10 @@ import Tetrimino from './Tetrimino';
 import type { BroadcastOperator, Socket } from 'socket.io';
 import { cp } from 'fs';
 import { TokenPayload } from '../socket';
+import { v4 } from 'uuid';
 
 class Game {
+	uid: string;
 	terrain: Terrain = new Terrain(20, 10);
 	tetrimo: Tetrimino = new Tetrimino(0);
 	nextTetrimo: Tetrimino = new Tetrimino(0);
@@ -16,11 +18,14 @@ class Game {
 	// Socket
 	socket: BroadcastOperator<any, any>;
 	socketMe: Socket;
+	isAdmin: boolean;
 
-	constructor(socket: BroadcastOperator<any, any>, socketMe: Socket, infoPlayer: TokenPayload) {
+	constructor(socket: BroadcastOperator<any, any>, socketMe: Socket, infoPlayer: TokenPayload, isAdmin: boolean) {
+		this.uid = v4();
 		this.socket = socket;
 		this.socketMe = socketMe;
 		this.infoPlayer = infoPlayer;
+		this.isAdmin = isAdmin;
 	}
 
 	startGame(seed: number): void {
@@ -44,7 +49,7 @@ class Game {
 		this.terrain.putPiece(this.tetrimo);
 		this.socket.emit('game/oponent', {
 			username: this.infoPlayer.username,
-			idPlayer: this.infoPlayer.indexPlayer,
+			idPlayer: this.infoPlayer.idPlayer,
 			terrain: this.terrain.terrain,
 			score: this.score,
 		});

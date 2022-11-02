@@ -52,32 +52,55 @@ class Room {
 		}
 	}
 
-	addPlayer(socketMe: Socket, infoPlayer: TokenPayload): number {
-		if (this.games.length >= this.params.maxPlayer || this.isStart) return -1;
-		const game = new Game(this.socket, socketMe, infoPlayer);
-		const indexPlayer =  this.games.push(game) - 1;
-		console.log('new Player: ', indexPlayer);
-		return indexPlayer;
+	sendPlayers() {
+		this.socket.emit('room/players', {
+			numberPlayer: `${this.games.length} / ${this.params.maxPlayer}`,
+			names: this.games.map((item) => item.infoPlayer.username),
+		});
 	}
 
-	updatePlayer(player:number, socketMe: Socket) {
-		this.games[player].socketMe = socketMe;
+	addPlayer(socketMe: Socket, infoPlayer: TokenPayload): string {
+		if (this.games.length >= this.params.maxPlayer || this.isStart) return '';
+		const game = new Game(this.socket, socketMe, infoPlayer, !this.games.length);
+		this.games.push(game);
+		socketMe.join(this.uid)
+		console.log('new Player: ', game.uid);
+		return game.uid;
 	}
 
-	leave(player:number) {
-		this.games[player].stopGame();
-		this.games[player].socketMe.leave(this.uid);
+	updatePlayer(playerId: string, socketMe: Socket) {
+		const game = this.games.find((item) => item.uid == playerId)
+		if (game) {
+			game.socketMe = socketMe;
+		}
 	}
 
-	key(player: number, key: string) {
+	leave(playerId: string) {
+		const game = this.games.find((item) => item.uid == playerId)
+		if (game) {
+			const indexGame = this.games.indexOf(game);
+			game.stopGame();
+			game.socketMe.leave(this.uid);
+			this.games.splice(indexGame, 1);
+			if (!indexGame && this.games[0]) {
+				this.games[0].isAdmin = true;
+			}
+			this.sendPlayers();
+		}
+	}
+
+	key(playerId: string, key: string) {
 		// console.log('key: ', key, ', player: ', player);
-		if (!player && key == 'Enter') this.start();
+		const game = this.games.find((item) => item.uid == playerId);
+
+		if (!game) return ;
+		if (game.isAdmin && key == 'Enter') this.start();
 		if (this.isStart) {
-			if (key == 'ArrowDown') this.games[player].fallPiece();
-			if (key == 'ArrowUp') this.games[player].rotatePiece();
-			if (key == 'ArrowRight') this.games[player].rightPiece();
-			if (key == 'ArrowLeft') this.games[player].leftPiece();
-			if (key == ' ') this.games[player].rotateVerticalyPiece();
+			if (key == 'ArrowDown') game.fallPiece();
+			if (key == 'ArrowUp') game.rotatePiece();
+			if (key == 'ArrowRight') game.rightPiece();
+			if (key == 'ArrowLeft') game.leftPiece();
+			if (key == ' ') game.rotateVerticalyPiece();
 		}
 	}
 }

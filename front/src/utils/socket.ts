@@ -7,7 +7,6 @@ let socket: Socket;
 
 export const connectSocket = (): Socket => {
 	if (socket) {
-		console.log('Socket already exist ! ');
 		return socket;
 	}
 
@@ -15,7 +14,6 @@ export const connectSocket = (): Socket => {
 
 	const routeByToken = () => {
 		const payload: TokenPayload|null = Token.get();
-		console.log(payload);
 		if (payload?.username == '') {
 			router.replace('/');
 		} else if (payload?.room == '') {

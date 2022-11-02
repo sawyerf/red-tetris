@@ -2,12 +2,16 @@
   <main>
 	<!-- <img class="logo" src="https://static.wikia.nocookie.net/logopedia/images/f/f8/Tetris_1997.svg" alt="logo" /> -->
 	<div class="game-main">
-		<div class="opponents">
+		<div v-if="competitors.length" class="opponents">
 			<div class="opponent" v-for="(competitor, index) in competitors" v-bind:key="index" >
 				<p class="opponent">{{competitor?.name}}</p>
 				<GameItem :terrain=competitor?.terrain :is-border=false :size-width="'11vh'" :size-height="'22vh'"/>
 				<p class="opponent">{{competitor?.score}}</p>
 			</div>
+		</div>
+		<div v-else class="info-players-game">
+			<p class="info-players-game">{{infoPlayer.numberPlayer}}</p>
+			<p class="info-players-game" v-for="(name, index) in infoPlayer.names" v-bind:key="index"> {{name}}</p>
 		</div>
 		<div class="myTerrain">
 			<GameItem :terrain=terrain :is-border=true :size-width="'44vh'" :size-height="'80vh'" />
@@ -26,9 +30,16 @@
 <script setup lang="ts">
 import GameItem from '../components/GameItem.vue';
 import { connectSocket } from '@/utils/socket';
-import { ref } from 'vue';
+import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
 import type { Ref } from 'vue';
 import Token from '@/utils/token';
+
+type Competitor = {
+	name: string,
+	idPlayer: string,
+	score: number,
+	terrain: number[][],
+};
 
 const createTerrain = (column: number, row: number): number[][] => {
 	let terrain: number[][] = new Array(row);
@@ -40,47 +51,74 @@ const createTerrain = (column: number, row: number): number[][] => {
 	return terrain;
 }
 
-type Competitor = {
-	name: string,
-	score: number,
-	terrain: number[][],
-};
-
 const terrain: Ref<number[][]> = ref(createTerrain(10, 20));
-const score: Ref<number> = ref(0);
-const competitors: Ref<Competitor[]> = ref(new Array());
-const io = connectSocket();
 const currentPiece: Ref<number[][]> = ref(createTerrain(3, 3));
 const nextPiece: Ref<number[][]> = ref(createTerrain(3, 3));
+const score: Ref<number> = ref(0);
+const competitors: Ref<Competitor[]> = ref(new Array());
+const infoPlayer: Ref<{numberPlayer: string, names: string[]}> = ref({numberPlayer: '0 / 6', names: []});
+const io = connectSocket();
 
-io.on('game/pieces', (data: {currentPiece: number[][], nextPiece: number[][]}) => {
-	currentPiece.value = data.currentPiece;
-	nextPiece.value = data.nextPiece;
-})
 
-io.on('game/oponent', (data: { username: string, idPlayer: number, terrain: number[][], score: number }) => {
-	// const index:number = competitors.value.find((item))
-	competitors.value[data.idPlayer] = {
+const socketOn = () => {
+	io.on('game/pieces', (data: {currentPiece: number[][], nextPiece: number[][]}) => {
+		currentPiece.value = data.currentPiece;
+		nextPiece.value = data.nextPiece;
+	})
+	
+	io.on('game/oponent', (data: { username: string, idPlayer: string, terrain: number[][], score: number }) => {
+		// const index:number = competitors.value.find((item))
+		const comp = competitors.value.find((item) => item.idPlayer == data.idPlayer);
+		const newComp = {
+			idPlayer: data.idPlayer,
 			name: data.username,
 			score: data.score,
 			terrain: data.terrain,
 		};
-	console.log('competitor: ', competitors.value);
-});
+		if (comp){
+			competitors.value[competitors.value.indexOf(comp)] = newComp;
+		} else {
+			competitors.value.push(newComp);
+		}
+	});
+	
+	io.on('game/terrain', (data: { terrain: number[][], score: number }) => {
+		terrain.value = data.terrain;
+		score.value = data.score;
+	});
 
-io.on('game/terrain', (data: { terrain: number[][], score: number }) => {
-	terrain.value = data.terrain;
-	score.value = data.score;
-});
+	io.on('room/players', (data: {numberPlayer: string, names: string[]}) => {
+		infoPlayer.value = data;
+		console.log(data)
+	})
 
-document.body.addEventListener('keydown', (event) => {
+}
+
+const socketOff = () => {
+	io.off('game/terrain');
+	io.off('game/pieces');
+	io.off('game/oponent');
+	io.off('room/players');
+}
+
+const keyHandler = (event: KeyboardEvent) => {
 	if (['Enter',  'ArrowDown',  'ArrowUp',  'ArrowRight',  'ArrowLeft',  ' '].indexOf(event.key) > -1) {
 		io.emit('game/key', { key: event.key });
-		console.log('key');
 	}
 	if (event.key == 'Escape') {
 		io.emit('room/leave');
 	}
-});
+};
 
+onMounted(() => {
+	document.body.addEventListener('keydown', keyHandler);
+	socketOn();
+	io.emit('room/getPlayers');
+	io.once('connect', () => io.emit('room/getPlayers'));
+})
+
+onUnmounted(() => {
+	document.body.removeEventListener('keydown', keyHandler);
+	socketOff();
+})
 </script>

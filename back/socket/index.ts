@@ -9,7 +9,7 @@ const rooms: Room[] = [];
 
 export type TokenPayload = {
 	username: string;
-	indexPlayer: number;
+	idPlayer: string;
 	room: string;
 	iat: number;
 }
@@ -31,7 +31,7 @@ const createToken = (payload: TokenPayload) => {
 class SocketGame {
 	socket: Socket;
 	io: Server;
-	payload: TokenPayload = {username: '', indexPlayer: -1, room: '', iat: Date.now()};
+	payload: TokenPayload = {username: '', idPlayer: '', room: '', iat: Date.now()};
 	handleActivated: string[] = [];
 	room: Room | undefined;
 
@@ -44,7 +44,6 @@ class SocketGame {
 
 	sendToken() {
 		this.socket.emit('token/new', {token: createToken(this.payload)});
-		console.log(this.payload);
 	}
 
 	sendListRooms () {
@@ -72,14 +71,12 @@ class SocketGame {
 			const payload: false | TokenPayload = checkToken(data.token);
 
 			if (payload === false) {
-				console.log('Wrong token');
 				this.sendToken();
 			} else {
-				console.log('setToken');
 				this.payload = payload;
 				this.room = rooms.find((room) => room.uid == this.payload.room);
 				if (this.room) {
-					this.room.updatePlayer(this.payload.indexPlayer, this.socket)
+					this.room.updatePlayer(this.payload.idPlayer, this.socket)
 					this.socket.join(payload.room);
 					this.GameHandle();
 				} else {
@@ -106,7 +103,6 @@ class SocketGame {
 	RoomHandle() {
 		if (this.handleActivated.indexOf('RoomHandle') > -1) return ;
 		this.handleActivated.push('RoomHandle');
-		console.log('RoomHandle');
 
 		this.sendListRooms();
 		this.socket.on('room/list', () => this.sendListRooms());
@@ -115,22 +111,25 @@ class SocketGame {
 			if (!data?.name || this.room) return ;
 			const room: Room = new Room(this.io, data.name);
 			rooms.push(room);
-			this.payload.indexPlayer = room.addPlayer(this.socket, this.payload);
+			this.payload.idPlayer = room.addPlayer(this.socket, this.payload);
 			this.payload.room = room.uid;
-			this.socket.join(room.uid)
-			this.sendToken();
 			this.room = room;
+			this.sendToken();
 			this.GameHandle();
 			this.sendListRooms();
 		});
 
+		this.socket.on('room/getPlayers', () => {
+			this.room?.sendPlayers()
+		})
+
 		this.socket.on('room/join', (data) => {
+			if (this.room) return ;
 			this.room = rooms.find((room) => room.uid == data.roomId);
 			if (this.room) {
-				this.payload.indexPlayer = this.room.addPlayer(this.socket, this.payload);
-				if (this.payload.indexPlayer > -1) {
+				this.payload.idPlayer = this.room.addPlayer(this.socket, this.payload);
+				if (this.payload.idPlayer != '') {
 					this.payload.room = this.room.uid;
-					this.socket.join(this.room.uid)
 					this.sendToken();
 					this.GameHandle();
 				}
@@ -139,9 +138,10 @@ class SocketGame {
 		});
 
 		this.socket.on('room/leave', () => {
-			if (this.payload.indexPlayer > -1) this.room?.leave(this.payload.indexPlayer);
+			if (this.payload.idPlayer != '') this.room?.leave(this.payload.idPlayer);
+			if (this.room?.games.length === 0) rooms.splice(rooms.indexOf(this.room), 1);
 			this.payload.room = '';
-			this.payload.indexPlayer = -1;
+			this.payload.idPlayer = '';
 			this.room = undefined;
 			this.sendToken();
 		});
@@ -151,9 +151,7 @@ class SocketGame {
 		if (this.handleActivated.indexOf('GameHandle') > -1) return ;
 		this.handleActivated.push('GameHandle');
 
-		console.log('GameHandle');
-
-		this.socket.on('game/key', (data) => this.room?.key(this.payload.indexPlayer, data.key))
+		this.socket.on('game/key', (data) => this.room?.key(this.payload.idPlayer, data.key))
 	}
 }
 

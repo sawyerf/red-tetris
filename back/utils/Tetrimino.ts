@@ -10,7 +10,6 @@ class Tetrimino {
 	constructor(seed: number) {
 		this.seed = this.randomSeed(seed);
 		this.indexPiece = Math.floor(this.seed * pieces.length);
-		console.log('Piece:', this.indexPiece);
 	}
 	
 	randomSeed(seed: number) {
@@ -24,7 +23,6 @@ class Tetrimino {
 		this.x = 4;
 		this.y = 0;
 		this.rotation = 0;
-		console.log('Piece:', this.indexPiece);
 	}
 
 	get(): number[][] {

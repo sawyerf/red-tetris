@@ -14,7 +14,6 @@ const io = connectSocket();
 const userName: Ref<string | null> = ref('');
 
 const onEnterName = () => {
-	console.log(io);
 	io.emit('user/setname', { name: userName.value });
 }
 

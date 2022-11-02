@@ -2,7 +2,7 @@ import jwt_decode from "jwt-decode";
 
 export type TokenPayload = {
 	username: string;
-	indexPlayer: number;
+	idPlayer: string;
 	room: string;
 	iat: number;
 }
@@ -10,7 +10,6 @@ export type TokenPayload = {
 const get = (): TokenPayload | null  => {
 	const token: string | null = localStorage.getItem('token');
 	if (!token) return null;
-	console.log(token);
 	const verified = jwt_decode(token);
 	return verified as TokenPayload;
 }
@@ -21,6 +20,7 @@ const getRaw = (): string | null  => {
 
 const save = (newToken: string) => {
 	localStorage.setItem('token', newToken);
+	console.log(get());
 }
 
 export default {

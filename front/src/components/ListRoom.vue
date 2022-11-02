@@ -8,18 +8,23 @@
 
 <script setup lang="ts">
 import { connectSocket } from '@/utils/socket';
-import { ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 
 const io = connectSocket();
 const listRoom = ref();
 
 const joinHandle = (room: {roomId: number}) => {
-	console.log('?', room);
 	io.emit('room/join', {roomId: room})
 }
 
-io.emit('room/list');
-io.on('room/list', (data) => {
-	listRoom.value = data.rooms;
-});
+onMounted(() => {
+	io.emit('room/list');
+	io.on('room/list', (data) => {
+		listRoom.value = data.rooms;
+	});
+})
+
+onUnmounted(() => {
+	io.off('room/list');
+})
 </script>

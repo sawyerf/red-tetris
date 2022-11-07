@@ -1,4 +1,6 @@
 $margin_block: 1px;
+$terrain_width: 48vh;
+$oponents_width: 33vw;
 
 .game-main {
     display: flex;
@@ -13,7 +15,7 @@ div.info-players-game {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 33vw;
+    width: $oponents_width;
     height: 80vh;
 }
 
@@ -22,12 +24,19 @@ p.info-players-game {
     font-size: 30px;
 }
 
+.info-text {
+    color: rgb(235, 231, 22);
+    font-size: 30px;
+    margin-top: auto;
+    text-align: center;
+}
+
 .opponents {
     display: grid;
     justify-content: center;
     gap: 1rem;
     grid-template-columns: repeat(auto-fill, 30%);
-    width: 33vw;
+    width: $oponents_width;
     height: 80vh;
     overflow: hide;
 }
@@ -49,12 +58,13 @@ p.opponent {
 .myTerrain {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-end;
     vertical-align: middle;
+    background-color: black;
 
     margin-top: auto;
     margin-bottom: auto;
-    width: 48vh;
+    width: $terrain_width;
     height: 100%;
 }
 
@@ -62,7 +72,7 @@ div.info-game {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: calc(100vw - 48vh - 33vw);
+    width: calc(100vw - $terrain_width - $oponents_width);
     height: 80vh;
 }
 
@@ -98,6 +108,7 @@ p.info-game {
 
 .block {
     flex: 1;
+    box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.05) inset;
 }
 
 .color-, .color-0 {
@@ -133,15 +144,14 @@ p.info-game {
     background-color: red;
 }
 
+.color-8 {
+    background-color: lightgrey;
+}
+
 .border-game {
-    // background-color: #2b075c;
     background-color: #787878;
 }
 
-.color-1, .color-2, .color-3, .color-4, .color-5, .color-6, .color-7, .border-game {
-    box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.05) inset;
-
-    // background-color: lightblue;
-    // box-shadow: calc(-1 * $size_block / 10) calc(-1 * $size_block / 10) 0px calc($size_block / 10) rgba(0, 0, 0, 0.3) inset;
-    // box-shadow: calc($size_block / 10) calc($size_block / 10) 0px calc($size_block / 10) rgba(0, 0, 0, 0.1) inset;
+.shadow {
+    opacity: 0.30;
 }

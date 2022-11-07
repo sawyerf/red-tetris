@@ -21,6 +21,13 @@ class Terrain {
 		return terrain;
 	}
 
+	endGame(): void {
+		this.terrain = this.terrain.map((line) => line.map((block) => {
+			if (block) return 8;
+			return 0;
+		}));
+	}
+
 	delFullLine(): number {
 		let lenRow: number = this.terrain.length;
 		let score: number = 0;
@@ -102,6 +109,40 @@ class Terrain {
 				}
 			}
 		}
+	}
+
+	putShadow(tetrimo: Tetrimino): void {
+		const shadow: Tetrimino = tetrimo.dup();
+		while (1) {
+			if (this.isOnFloor(shadow)) {
+				let piece: number[][] = shadow.get();
+				let lenRow: number = piece.length;
+		
+				for (let indexRow = 0; indexRow < lenRow; indexRow++) {
+					let lenColumn: number = piece[indexRow].length;
+					for (let indexColumn = 0; indexColumn < lenColumn; indexColumn++) {
+						if (piece[indexRow][indexColumn]) {
+							this.terrain[shadow.y + indexRow][shadow.x + indexColumn] = (shadow.indexPiece + 1) * -1;
+						}
+					}
+				}		
+				return ;
+			}
+			shadow.fall();
+		}
+	}
+
+	delShadow(): void {
+		let lenRow: number = this.terrain.length;
+		
+		for (let indexRow = 0; indexRow < lenRow; indexRow++) {
+			let lenColumn: number = this.terrain[indexRow].length;
+			for (let indexColumn = 0; indexColumn < lenColumn; indexColumn++) {
+				if (this.terrain[indexRow][indexColumn] < 0) {
+					this.terrain[indexRow][indexColumn] = 0;
+				}
+			}
+		}		
 	}
 }
 

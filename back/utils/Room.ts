@@ -17,6 +17,7 @@ class Room {
 	games: Game[] = [];
 	isStart: boolean = false;
 	params: Params = {sizeRow: 20, sizeColumn: 10, maxPlayer: 6};
+	checkFinish: NodeJS.Timer|undefined;
 	winner: Game | undefined;
 	socket: BroadcastOperator<any, any>;
 
@@ -27,22 +28,29 @@ class Room {
 		console.log('Room: ', this.uid);
 	}
 
-	isEnd() {
-		const isEnd:boolean = this.games.every((game) => !game.isStart)
+	isEnd(): void {
+		const isUp: Game[] = this.games.filter((game) => game.isStart)
 		let winner: Game = this.games[0];
 
-		if (isEnd) {
+		if (!isUp.length) {
 			for (let game of this.games) {
 				if (game.score > winner.score) {
 					winner = game;
 				}
 			}
+			this.isStart = false;
+		} else if (isUp.length == 1 && this.games.length > 1) {
+			winner = isUp[0];
+			winner.stopGame();
+		} else {
+			return ;
 		}
-		console.log('winner is ', winner);
-		return isEnd;
+		clearInterval(this.checkFinish);
+		this.socket.emit('game/end', {winnerName: winner.infoPlayer.username, score: winner.score})
 	}
 
 	start() {
+		this.checkFinish = setInterval(() => this.isEnd(), 1000)
 		if (this.games.every((item) => !item.isStart)) {
 			const seed = Math.random()
 			for (let game of this.games) {
@@ -53,6 +61,7 @@ class Room {
 	}
 
 	sendPlayers() {
+		if (this.isStart) return ;
 		this.socket.emit('room/players', {
 			numberPlayer: `${this.games.length} / ${this.params.maxPlayer}`,
 			names: this.games.map((item) => item.infoPlayer.username),
@@ -95,8 +104,8 @@ class Room {
 
 		if (!game) return ;
 		if (game.isAdmin && key == 'Enter') this.start();
-		if (this.isStart) {
-			if (key == 'ArrowDown') game.fallPiece();
+		if (game.isStart) {
+			if (key == 'ArrowDown') game.fallPilePiece();
 			if (key == 'ArrowUp') game.rotatePiece();
 			if (key == 'ArrowRight') game.rightPiece();
 			if (key == 'ArrowLeft') game.leftPiece();

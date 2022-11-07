@@ -14,7 +14,7 @@ class Game {
 	isStart: boolean = false;
 	score: number = 0;
 	infoPlayer: TokenPayload;
-	intervalId: NodeJS.Timer = setInterval(() => { }, 200);
+	intervalId: NodeJS.Timer|undefined;
 	// Socket
 	socket: BroadcastOperator<any, any>;
 	socketMe: Socket;
@@ -35,35 +35,41 @@ class Game {
 		this.score = 0;
 		clearInterval(this.intervalId);
 		this.isStart = true;
-		this.intervalId = setInterval(() => { this.fallPiece() }, 750);
+		this.intervalId = setInterval(() => { this.fallPiece() }, 700);
 		this.sendTerrainEveryone();
 		this.sendPiece();
 	}
 
 	stopGame() {
 		this.isStart = false;
+		this.terrain.endGame();
+		this.sendTerrainEveryone();
 		clearInterval(this.intervalId);
 	}
 
 	sendTerrainEveryone(): void {
-		this.terrain.putPiece(this.tetrimo);
 		this.socket.emit('game/oponent', {
 			username: this.infoPlayer.username,
 			idPlayer: this.infoPlayer.idPlayer,
 			terrain: this.terrain.terrain,
 			score: this.score,
 		});
-		this.terrain.delPiece(this.tetrimo);
 		this.sendTerrainMe();
 	}
 
 	sendTerrainMe(): void {
-		this.terrain.putPiece(this.tetrimo);
+		if (this.isStart) {
+			this.terrain.putShadow(this.tetrimo);
+			this.terrain.putPiece(this.tetrimo);
+		}
 		this.socketMe.emit('game/terrain', {
 			terrain: this.terrain.terrain,
 			score: this.score,
 		});
-		this.terrain.delPiece(this.tetrimo);
+		if (this.isStart) {
+			this.terrain.delPiece(this.tetrimo);
+			this.terrain.delShadow();
+		}
 	}
 
 	sendPiece(): void {
@@ -75,18 +81,28 @@ class Game {
 		if (this.terrain.isOnFloor(this.tetrimo)) { // Piece is on the floor
 			this.terrain.putPiece(this.tetrimo);
 			this.score += this.terrain.delFullLine();
-			this.tetrimo.newPiece();
-			this.nextTetrimo.newPiece();
-			this.sendPiece();
-			if (this.terrain.isPossible(this.tetrimo) == false) {
+			if (this.terrain.isPossible(this.nextTetrimo) == false) {
 				this.stopGame();
 			} else {
-				this.sendTerrainEveryone();
+				this.tetrimo.newPiece();
+				this.nextTetrimo.newPiece();
+				this.sendPiece();
 			}
+			this.sendTerrainEveryone();
 			return;
 		}
 		this.tetrimo.fall();
 		this.sendTerrainMe();
+	}
+
+	fallPilePiece(): void {
+		while (true) {
+			if (this.terrain.isOnFloor(this.tetrimo)) {
+				this.fallPiece();
+				return ;
+			}
+			this.tetrimo.fall();
+		}
 	}
 
 	rightPiece(): void {

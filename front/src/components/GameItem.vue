@@ -12,7 +12,7 @@
 
 		<div class="line" v-for="(row, index) in terrain" v-bind:key="index" >
 			<div class="block border-game" v-if="isBorder"></div>
-			<div :class="`block color-${column}`" v-for="(column, index) in row" v-bind:key="index"></div>
+			<div :class="`block color-${Math.abs(column)} ${column < 0 ? 'shadow' : ''}`" v-for="(column, index) in row" v-bind:key="index"></div>
 			<div class="block border-game" v-if="isBorder"></div>
 		</div>
 

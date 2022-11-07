@@ -18,6 +18,7 @@
 		</div>
 		<div class="info-game">
 			<p class="info-game"> {{score}} pts </p>
+			<p class="info-text"> {{ infoText }} </p>
 			<div class="piece-info">
 				<GameItem style="margin-bottom: 2.1vh; border: solid white 1px;" :terrain=nextPiece :is-border=false :size-width="'15vh'" :size-height="'15vh'" />
 				<GameItem style="border: solid white 1px;" :terrain=currentPiece :is-border=false :size-width="'15vh'" :size-height="'15vh'" />
@@ -30,9 +31,8 @@
 <script setup lang="ts">
 import GameItem from '../components/GameItem.vue';
 import { connectSocket } from '@/utils/socket';
-import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import type { Ref } from 'vue';
-import Token from '@/utils/token';
 
 type Competitor = {
 	name: string,
@@ -54,6 +54,7 @@ const createTerrain = (column: number, row: number): number[][] => {
 const terrain: Ref<number[][]> = ref(createTerrain(10, 20));
 const currentPiece: Ref<number[][]> = ref(createTerrain(3, 3));
 const nextPiece: Ref<number[][]> = ref(createTerrain(3, 3));
+const infoText: Ref<string> = ref('');
 const score: Ref<number> = ref(0);
 const competitors: Ref<Competitor[]> = ref(new Array());
 const infoPlayer: Ref<{numberPlayer: string, names: string[]}> = ref({numberPlayer: '0 / 6', names: []});
@@ -64,10 +65,10 @@ const socketOn = () => {
 	io.on('game/pieces', (data: {currentPiece: number[][], nextPiece: number[][]}) => {
 		currentPiece.value = data.currentPiece;
 		nextPiece.value = data.nextPiece;
+		infoText.value = '';
 	})
 	
 	io.on('game/oponent', (data: { username: string, idPlayer: string, terrain: number[][], score: number }) => {
-		// const index:number = competitors.value.find((item))
 		const comp = competitors.value.find((item) => item.idPlayer == data.idPlayer);
 		const newComp = {
 			idPlayer: data.idPlayer,
@@ -89,15 +90,20 @@ const socketOn = () => {
 
 	io.on('room/players', (data: {numberPlayer: string, names: string[]}) => {
 		infoPlayer.value = data;
+		competitors.value = [];
 		console.log(data)
 	})
 
+	io.on('game/end', (data) => {
+		infoText.value = `${data.winnerName} win with ${data.score} pts`
+	})
 }
 
 const socketOff = () => {
 	io.off('game/terrain');
 	io.off('game/pieces');
 	io.off('game/oponent');
+	io.off('game/end');
 	io.off('room/players');
 }
 

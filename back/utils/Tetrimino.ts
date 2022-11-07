@@ -25,6 +25,16 @@ class Tetrimino {
 		this.rotation = 0;
 	}
 
+	dup(): Tetrimino {
+		const dupTet = new Tetrimino(0);
+
+		dupTet.x = this.x;
+		dupTet.y = this.y;
+		dupTet.indexPiece = this.indexPiece;
+		dupTet.rotation = this.rotation;
+		return dupTet;
+	}
+
 	get(): number[][] {
 		return pieces[this.indexPiece].rotation[this.rotation].map((item) => item.map((block) => {
 				return block * (this.indexPiece + 1);

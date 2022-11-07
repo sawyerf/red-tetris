@@ -4,6 +4,7 @@ import { v4 } from 'uuid';
 import { threadId } from "worker_threads";
 import { TokenPayload } from "../socket";
 import Tetrimino from "./Tetrimino";
+import { PassThrough } from "stream";
 
 type Params = {
 	sizeRow: number,
@@ -32,7 +33,11 @@ class Room {
 		const isUp: Game[] = this.games.filter((game) => game.isStart)
 		let winner: Game = this.games[0];
 
-		if (!isUp.length) {
+		if (!this.games.length) {
+			this.isStart = false;
+			clearInterval(this.checkFinish);
+			return ;
+		} else if (!isUp.length) {
 			for (let game of this.games) {
 				if (game.score > winner.score) {
 					winner = game;
@@ -45,6 +50,7 @@ class Room {
 		} else {
 			return ;
 		}
+		this.isStart = false;
 		clearInterval(this.checkFinish);
 		this.socket.emit('game/end', {winnerName: winner.infoPlayer.username, score: winner.score})
 	}

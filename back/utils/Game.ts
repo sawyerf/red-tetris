@@ -14,6 +14,7 @@ class Game {
 	isStart: boolean = false;
 	score: number = 0;
 	infoPlayer: TokenPayload;
+	intervalTime: number = 700;
 	intervalId: NodeJS.Timer|undefined;
 	// Socket
 	socket: BroadcastOperator<any, any>;
@@ -80,7 +81,14 @@ class Game {
 		if (!this.isStart) return ;
 		if (this.terrain.isOnFloor(this.tetrimo)) { // Piece is on the floor
 			this.terrain.putPiece(this.tetrimo);
-			this.score += this.terrain.delFullLine();
+			const appendScore: number = this.terrain.delFullLine();
+			if (appendScore) {
+				clearInterval(this.intervalId);
+				this.intervalTime -= appendScore * 10;
+				if (this.intervalTime < 300) this.intervalTime = 300;
+				this.intervalId = setInterval(() => { this.fallPiece() }, this.intervalTime);
+			}
+			this.score += appendScore;
 			if (this.terrain.isPossible(this.nextTetrimo) == false) {
 				this.stopGame();
 			} else {

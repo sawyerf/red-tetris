@@ -3,7 +3,7 @@ import Terrain from './Terrain';
 import Tetrimino from './Tetrimino';
 import type { BroadcastOperator, Socket } from 'socket.io';
 import { cp } from 'fs';
-import { TokenPayload } from '../socket';
+import { TokenPayload } from '../socket/token';
 import { v4 } from 'uuid';
 
 class Game {

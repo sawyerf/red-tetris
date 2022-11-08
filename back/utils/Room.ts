@@ -2,7 +2,7 @@ import type { BroadcastOperator, Server, Socket } from "socket.io";
 import Game from "./Game";
 import { v4 } from 'uuid';
 import { threadId } from "worker_threads";
-import { TokenPayload } from "../socket";
+import { TokenPayload } from "../socket/token";
 import Tetrimino from "./Tetrimino";
 import { PassThrough } from "stream";
 

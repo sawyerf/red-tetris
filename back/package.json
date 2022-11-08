@@ -7,7 +7,7 @@
     "build": "tsc",
     "dev": "nodemon app.ts --trace-warnings",
     "start": "node ./dist/app.js",
-    "test": "jest --config ./jest.config.json"
+    "test": "jest --config ./jest.config.json --coverage"
   },
   "author": "",
   "license": "ISC",

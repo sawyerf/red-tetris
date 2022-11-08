@@ -1,34 +1,11 @@
 import type { Socket, Server } from 'socket.io';
 import Room from '../utils/Room';
-import jwt from 'jsonwebtoken';
+import Token from './token'
+import type { TokenPayload } from './token'
 
-require('dotenv').config();
-
-const secret: jwt.Secret = process.env.JWT_TOKEN || '';
 const rooms: Room[] = [];
 
-export type TokenPayload = {
-	username: string;
-	idPlayer: string;
-	room: string;
-	iat: number;
-}
-
-const checkToken = (token: string) => {
-	let verified;
-	try {
-		verified = jwt.verify(token, secret);
-	} catch {
-		return false;
-	}
-	return verified as TokenPayload;
-}
-
-const createToken = (payload: TokenPayload) => {
-	return jwt.sign(payload, secret);
-}
-
-class SocketGame {
+class SocketManager {
 	socket: Socket;
 	io: Server;
 	payload: TokenPayload = {username: '', idPlayer: '', room: '', iat: Date.now()};
@@ -43,7 +20,7 @@ class SocketGame {
 	}
 
 	sendToken() {
-		this.socket.emit('token/new', {token: createToken(this.payload)});
+		this.socket.emit('token/new', {token: Token.createToken(this.payload)});
 	}
 
 	sendListRooms () {
@@ -68,7 +45,7 @@ class SocketGame {
 		});
 
 		this.socket.on('token/set', (data) => {
-			const payload: false | TokenPayload = checkToken(data.token);
+			const payload: false | TokenPayload = Token.checkToken(data.token);
 
 			if (payload === false) {
 				this.sendToken();
@@ -155,4 +132,4 @@ class SocketGame {
 	}
 }
 
-export default SocketGame;
+export default SocketManager;

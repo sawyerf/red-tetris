@@ -1,9 +1,15 @@
 {
-    "jest": {
-        "preset": "ts-jest",
-        "testEnvironment": "node",
-        "transform": {
-            "^.+\\.spec.ts$": "ts-jest"
+    "collectCoverage": true,
+    "coverageReporters": [
+        "lcov"
+    ],
+    "coverageDirectory": "./coverage",
+    "coverageThreshold": {
+        "global": {
+            "branches": 0,
+            "functions": 0,
+            "lines": 0,
+            "statements": 0
         }
     }
 }

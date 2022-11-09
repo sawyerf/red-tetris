@@ -2,22 +2,16 @@
 	<div class="home-main">
 		<img class="logo" src="https://static.wikia.nocookie.net/logopedia/images/f/f8/Tetris_1997.svg" alt="logo" />
 		<ListRoom></ListRoom>
-		<input class="input-name" placeholder="Create Room" :value="roomName" @input="(event) => roomName = event.target.value" v-on:keyup.enter="onEnterRoom" />
+		<button v-on:click="onClickCreate">Create Room</button>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import type { Ref } from 'vue';
 import ListRoom from '@/components/ListRoom.vue';
-import { connectSocket } from '@/utils/socket';
+import router from '@/utils/router';
 
-const roomName: Ref<string | null> = ref('');
-const io = connectSocket();
-
-const onEnterRoom = () => {
-	io.emit('room/create', {name: roomName.value});
+const onClickCreate = () => {
+	console.log('de')
+	router.push('/create')
 }
-
-
 </script>

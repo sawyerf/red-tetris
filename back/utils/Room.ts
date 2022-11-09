@@ -60,7 +60,7 @@ class Room {
 		if (this.games.every((item) => !item.isStart)) {
 			const seed = Math.random()
 			for (let game of this.games) {
-				game.startGame(seed);
+				game.startGame(seed, this.params.sizeRow, this.params.sizeColumn);
 			}
 			this.isStart = true;
 		}

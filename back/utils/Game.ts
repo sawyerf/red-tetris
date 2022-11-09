@@ -8,13 +8,17 @@ import { v4 } from 'uuid';
 
 class Game {
 	uid: string;
-	terrain: Terrain = new Terrain(20, 10);
+	isStart: boolean = false;
+	// Terrain & Tetri
+	terrain: Terrain = new Terrain(0, 0);
 	tetrimo: Tetrimino = new Tetrimino(0);
 	nextTetrimo: Tetrimino = new Tetrimino(0);
-	isStart: boolean = false;
+	// Player info
 	score: number = 0;
 	infoPlayer: TokenPayload;
+	// Speed
 	intervalTime: number = 700;
+	minSpeed: number = 200;
 	intervalId: NodeJS.Timer|undefined;
 	// Socket
 	socket: BroadcastOperator<any, any>;
@@ -29,14 +33,14 @@ class Game {
 		this.isAdmin = isAdmin;
 	}
 
-	startGame(seed: number): void {
-		this.terrain = new Terrain(20, 10);
+	startGame(seed: number, sizeRow: number, sizeColumn: number): void {
+		this.terrain = new Terrain(sizeRow, sizeColumn);
 		this.tetrimo = new Tetrimino(seed);
 		this.nextTetrimo = new Tetrimino(this.tetrimo.seed);
 		this.score = 0;
 		clearInterval(this.intervalId);
 		this.isStart = true;
-		this.intervalId = setInterval(() => { this.fallPiece() }, 700);
+		this.intervalId = setInterval(() => { this.fallPiece() }, this.intervalTime);
 		this.sendTerrainEveryone();
 		this.sendPiece();
 	}
@@ -85,7 +89,7 @@ class Game {
 			if (appendScore) {
 				clearInterval(this.intervalId);
 				this.intervalTime -= appendScore * 10;
-				if (this.intervalTime < 300) this.intervalTime = 300;
+				if (this.intervalTime < this.minSpeed) this.intervalTime = this.minSpeed;
 				this.intervalId = setInterval(() => { this.fallPiece() }, this.intervalTime);
 			}
 			this.score += appendScore;

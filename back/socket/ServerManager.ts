@@ -44,7 +44,7 @@ class SocketManager {
 			this.userHandle();
 		});
 
-		this.socket.on('token/set', (data) => {
+		this.socket.on('token/set', (data: { token: string }) => {
 			const payload: false | TokenPayload = Token.checkToken(data.token);
 
 			if (payload === false) {

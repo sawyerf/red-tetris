@@ -21,4 +21,10 @@ describe('jwt Token', () => {
 		expect(Token.checkToken(tokenEncrypt)).toStrictEqual(payload);
 		expect(jwt.decode(tokenEncrypt)).toStrictEqual(payload);
 	})
+
+	test('False Verify', () => {
+		const token: string = jwt.sign(payload, 'fakeSecret');
+
+		expect(Token.checkToken(token)).toBe(false);
+	})
 })

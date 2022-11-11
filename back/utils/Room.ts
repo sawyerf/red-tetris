@@ -6,10 +6,12 @@ import { TokenPayload } from "../socket/token";
 import Tetrimino from "./Tetrimino";
 import { PassThrough } from "stream";
 
-type Params = {
+export type Params = {
 	sizeRow: number,
 	sizeColumn: number,
 	maxPlayer: number,
+	speedStart: number,
+	speedMin: number,
 }
 
 class Room {
@@ -17,15 +19,16 @@ class Room {
 	name: string;
 	games: Game[] = [];
 	isStart: boolean = false;
-	params: Params = {sizeRow: 20, sizeColumn: 10, maxPlayer: 6};
+	params: Params;
 	checkFinish: NodeJS.Timer|undefined;
 	winner: Game | undefined;
 	socket: BroadcastOperator<any, any>;
 
-	constructor(socket: Server, name: string) {
+	constructor(socket: Server, name: string, params: Params) {
 		this.uid = v4();
 		this.socket = socket.sockets.to(this.uid);
 		this.name = name;
+		this.params = params;
 		console.log('Room: ', this.uid);
 	}
 
@@ -60,7 +63,7 @@ class Room {
 		if (this.games.every((item) => !item.isStart)) {
 			const seed = Math.random()
 			for (let game of this.games) {
-				game.startGame(seed, this.params.sizeRow, this.params.sizeColumn);
+				game.startGame(seed);
 			}
 			this.isStart = true;
 		}
@@ -76,7 +79,7 @@ class Room {
 
 	addPlayer(socketMe: Socket, infoPlayer: TokenPayload): string {
 		if (this.games.length >= this.params.maxPlayer || this.isStart) return '';
-		const game = new Game(this.socket, socketMe, infoPlayer, !this.games.length);
+		const game = new Game(this.socket, socketMe, infoPlayer, !this.games.length, this.params);
 		this.games.push(game);
 		socketMe.join(this.uid)
 		console.log('new Player: ', game.uid);

@@ -5,16 +5,18 @@ import type { BroadcastOperator, Socket } from 'socket.io';
 import { cp } from 'fs';
 import { TokenPayload } from '../socket/token';
 import { v4 } from 'uuid';
+import { Params } from './Room';
 
 class Game {
 	uid: string;
 	isStart: boolean = false;
 	// Terrain & Tetri
 	terrain: Terrain = new Terrain(0, 0);
-	tetrimo: Tetrimino = new Tetrimino(0);
-	nextTetrimo: Tetrimino = new Tetrimino(0);
+	tetrimo: Tetrimino = new Tetrimino(0, 1);
+	nextTetrimo: Tetrimino = new Tetrimino(0, 1);
 	// Player info
 	score: number = 0;
+	params: Params;
 	infoPlayer: TokenPayload;
 	// Speed
 	intervalTime: number = 700;
@@ -25,18 +27,20 @@ class Game {
 	socketMe: Socket;
 	isAdmin: boolean;
 
-	constructor(socket: BroadcastOperator<any, any>, socketMe: Socket, infoPlayer: TokenPayload, isAdmin: boolean) {
+	constructor(socket: BroadcastOperator<any, any>, socketMe: Socket, infoPlayer: TokenPayload, isAdmin: boolean, params: Params) {
 		this.uid = v4();
 		this.socket = socket;
 		this.socketMe = socketMe;
 		this.infoPlayer = infoPlayer;
 		this.isAdmin = isAdmin;
+		this.intervalTime = params.speedStart;
+		this.params = params;
 	}
 
-	startGame(seed: number, sizeRow: number, sizeColumn: number): void {
-		this.terrain = new Terrain(sizeRow, sizeColumn);
-		this.tetrimo = new Tetrimino(seed);
-		this.nextTetrimo = new Tetrimino(this.tetrimo.seed);
+	startGame(seed: number): void {
+		this.terrain = new Terrain(this.params.sizeRow, this.params.sizeColumn);
+		this.tetrimo = new Tetrimino(seed, this.params.sizeColumn);
+		this.nextTetrimo = new Tetrimino(this.tetrimo.seed, this.params.sizeColumn);
 		this.score = 0;
 		clearInterval(this.intervalId);
 		this.isStart = true;
@@ -89,7 +93,7 @@ class Game {
 			if (appendScore) {
 				clearInterval(this.intervalId);
 				this.intervalTime -= appendScore * 10;
-				if (this.intervalTime < this.minSpeed) this.intervalTime = this.minSpeed;
+				if (this.intervalTime < this.params.speedMin) this.intervalTime = this.params.speedMin;
 				this.intervalId = setInterval(() => { this.fallPiece() }, this.intervalTime);
 			}
 			this.score += appendScore;

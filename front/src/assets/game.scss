@@ -1,4 +1,3 @@
-$margin_block: 1px;
 $terrain_width: 48vh;
 $oponents_width: 33vw;
 
@@ -64,7 +63,9 @@ p.opponent {
 
     margin-top: auto;
     margin-bottom: auto;
-    width: $terrain_width;
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
     height: 100%;
 }
 
@@ -72,7 +73,10 @@ div.info-game {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: calc(100vw - $terrain_width - $oponents_width);
+    // width: calc(100vw - $terrain_width - $oponents_width);
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
     height: 80vh;
 }
 
@@ -92,66 +96,4 @@ p.info-game {
     background-color: rgba(120, 120, 120, 0.6);
     margin-top: auto;
     padding: 2vh;
-}
-
-.gameBox {
-    display: flex;
-    flex-direction: column;
-}
-
-.line {
-    display: flex;
-    flex-direction: row;
-    flex: auto;
-    width: 100%;
-}
-
-.block {
-    flex: 1;
-    box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.05) inset;
-}
-
-.color-, .color-0 {
-    background-color: black;
-    box-shadow: 0px 0px 0px $margin_block lightgrey inset;
-}
-
-.color-1 {
-    background-color: lightblue;
-}
-
-.color-2 {
-    background-color: blue;
-}
-
-.color-3 {
-    background-color: orange;
-}
-
-.color-4 {
-    background-color: yellow;
-}
-
-.color-5 {
-    background-color: green;
-}
-
-.color-6 {
-    background-color: purple;
-}
-
-.color-7 {
-    background-color: red;
-}
-
-.color-8 {
-    background-color: lightgrey;
-}
-
-.border-game {
-    background-color: #787878;
-}
-
-.shadow {
-    opacity: 0.30;
 }

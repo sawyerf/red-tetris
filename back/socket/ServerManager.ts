@@ -1,7 +1,8 @@
 import type { Socket, Server } from 'socket.io';
-import Room from '../utils/Room';
+import Room, { Params } from '../utils/Room';
 import Token from './token'
 import type { TokenPayload } from './token'
+import { SockCreateRoom } from './sockType';
 
 const rooms: Room[] = [];
 
@@ -84,9 +85,21 @@ class SocketManager {
 		this.sendListRooms();
 		this.socket.on('room/list', () => this.sendListRooms());
 
-		this.socket.on('room/create', (data) => {
+		this.socket.on('room/create', (data: SockCreateRoom) => {
 			if (!data?.name || this.room) return ;
-			const room: Room = new Room(this.io, data.name);
+			const params: Params = {
+				sizeRow: data.sizeTerrain.sizeRow,
+				sizeColumn: data.sizeTerrain.sizeColumn,
+				maxPlayer: 6,
+				speedStart: data.speed,
+				speedMin: 100,
+			}
+			if (params.speedStart > 1000) params.speedStart = 1000
+			if (params.speedStart < 100) params.speedStart = 100
+			if (params.speedMin > params.speedStart) params.speedMin = params.speedStart
+			if (params.speedMin < 100) params.speedMin = 100
+
+			const room: Room = new Room(this.io, data.name, params);
 			rooms.push(room);
 			this.payload.idPlayer = room.addPlayer(this.socket, this.payload);
 			this.payload.room = room.uid;

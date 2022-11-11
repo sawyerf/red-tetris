@@ -17,6 +17,7 @@ export const connectSocket = (): Socket => {
 		if (payload?.username == '') {
 			router.replace('/');
 		} else if (payload?.room == '') {
+			if (router.currentRoute.value.path == '/create') return ;
 			router.replace('/list');
 		} else {
 			router.replace('/game');

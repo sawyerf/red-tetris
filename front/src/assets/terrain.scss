@@ -1,0 +1,61 @@
+.gameBox {
+    display: flex;
+    flex-direction: column;
+}
+
+.line {
+    display: flex;
+    flex-direction: row;
+    flex: auto;
+    width: 100%;
+}
+
+.block {
+    flex: 1;
+    box-shadow: 0px 0px 0px 5px rgba(0, 0, 0, 0.05) inset;
+}
+
+.color-, .color-0 {
+    background-color: black;
+    box-shadow: 0px 0px 0px 1px lightgrey inset;
+}
+
+.color-1 {
+    background-color: lightblue;
+}
+
+.color-2 {
+    background-color: blue;
+}
+
+.color-3 {
+    background-color: orange;
+}
+
+.color-4 {
+    background-color: yellow;
+}
+
+.color-5 {
+    background-color: green;
+}
+
+.color-6 {
+    background-color: purple;
+}
+
+.color-7 {
+    background-color: red;
+}
+
+.color-8 {
+    background-color: lightgrey;
+}
+
+.border-game {
+    background-color: #787878;
+}
+
+.shadow {
+    opacity: 0.30;
+}

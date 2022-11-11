@@ -5,7 +5,7 @@
 		<div v-if="competitors.length" class="opponents">
 			<div class="opponent" v-for="(competitor, index) in competitors" v-bind:key="index" >
 				<p class="opponent">{{competitor?.name}}</p>
-				<GameItem :terrain=competitor?.terrain :is-border=false :size-width="'11vh'" :size-height="'22vh'"/>
+				<GameItem :terrain=competitor?.terrain :is-border=false :size-width=calcSizeWidth(competitor?.terrain,22) :size-height="'22vh'"/>
 				<p class="opponent">{{competitor?.score}}</p>
 			</div>
 		</div>
@@ -14,7 +14,7 @@
 			<p class="info-players-game" v-for="(name, index) in infoPlayer.names" v-bind:key="index"> {{name}}</p>
 		</div>
 		<div class="myTerrain">
-			<GameItem :terrain=terrain :is-border=true :size-width="'44vh'" :size-height="'80vh'" />
+			<GameItem :terrain=terrain :is-border=true :size-width=calcSizeWidth(terrain,80) :size-height="'80vh'" />
 		</div>
 		<div class="info-game">
 			<p class="info-game"> {{score}} pts </p>
@@ -29,10 +29,12 @@
 </template>
 
 <script setup lang="ts">
-import GameItem from '../components/GameItem.vue';
-import { connectSocket } from '@/utils/socket';
 import { onMounted, onUnmounted, ref } from 'vue';
 import type { Ref } from 'vue';
+
+import GameItem from '../components/GameItem.vue';
+import { connectSocket } from '@/utils/socket';
+import { createTerrain } from '@/utils/terrain'
 
 type Competitor = {
 	name: string,
@@ -40,16 +42,6 @@ type Competitor = {
 	score: number,
 	terrain: number[][],
 };
-
-const createTerrain = (column: number, row: number): number[][] => {
-	let terrain: number[][] = new Array(row);
-	row--;
-	for (; row >= 0; row--) {
-		terrain[row] = new Array(column);
-		terrain[row].fill(0);
-	}
-	return terrain;
-}
 
 const terrain: Ref<number[][]> = ref(createTerrain(10, 20));
 const currentPiece: Ref<number[][]> = ref(createTerrain(3, 3));
@@ -60,6 +52,14 @@ const competitors: Ref<Competitor[]> = ref(new Array());
 const infoPlayer: Ref<{numberPlayer: string, names: string[]}> = ref({numberPlayer: '0 / 6', names: []});
 const io = connectSocket();
 
+const calcSizeWidth = (terrainCalc: number[][], sizeHeight: number): string => {
+	const sizeColumn = terrainCalc[0].length;
+	const sizeRow = terrainCalc.length;
+	const sizeWidth = (sizeHeight * (sizeColumn + 2)) / (sizeRow + 2);
+
+	console.log(`${sizeWidth}vh`)
+	return `${sizeWidth}vh`
+}
 
 const socketOn = () => {
 	io.on('game/pieces', (data: {currentPiece: number[][], nextPiece: number[][]}) => {

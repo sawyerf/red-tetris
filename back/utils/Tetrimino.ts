@@ -6,10 +6,13 @@ class Tetrimino {
 	indexPiece: number = 0;
 	rotation: number = 0;
 	seed: number;
+	sizeColumn: number;
 	
-	constructor(seed: number) {
+	constructor(seed: number, sizeColumn: number) {
 		this.seed = this.randomSeed(seed);
 		this.indexPiece = Math.floor(this.seed * pieces.length);
+		this.sizeColumn = sizeColumn;
+		this.x = this.getIndexStart();
 	}
 	
 	randomSeed(seed: number) {
@@ -17,16 +20,24 @@ class Tetrimino {
 		return seed - Math.floor(seed);
 	};
 
-	newPiece() {
+	getIndexStart() {
+		const sizeTetri = this.get()[0].length;
+
+		return Math.floor((this.sizeColumn / 2) - (sizeTetri / 2));
+	}
+
+	newPiece(): void {
 		this.seed = this.randomSeed(this.seed);
-		this.indexPiece = Math.floor(this.seed * pieces.length);
-		this.x = 4;
-		this.y = 0;
+		const newIndexPiece = Math.floor(this.seed * pieces.length);
+		if (newIndexPiece == this.indexPiece) return this.newPiece();
+		this.indexPiece = newIndexPiece
 		this.rotation = 0;
+		this.x = this.getIndexStart();
+		this.y = 0;
 	}
 
 	dup(): Tetrimino {
-		const dupTet = new Tetrimino(0);
+		const dupTet = new Tetrimino(0, this.sizeColumn);
 
 		dupTet.x = this.x;
 		dupTet.y = this.y;

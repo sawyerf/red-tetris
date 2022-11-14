@@ -5,12 +5,15 @@ import router from '@/utils/router';
 
 let socket: Socket;
 
-export const connectSocket = (): Socket => {
+export const connectSocket = (test: boolean = false): Socket => {
 	if (socket) {
 		return socket;
 	}
 
 	socket = io('ws://localhost:3000');
+
+	if (test === true) return socket;
+	console.log('--------------------------------------')
 
 	const routeByToken = () => {
 		const payload: TokenPayload|null = Token.get();

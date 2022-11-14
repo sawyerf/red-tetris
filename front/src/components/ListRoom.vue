@@ -19,7 +19,9 @@ const joinHandle = (room: {roomId: number}) => {
 
 onMounted(() => {
 	io.emit('room/list');
+	console.log('ici');
 	io.on('room/list', (data) => {
+		console.log('enfiiiiiiin');
 		listRoom.value = data.rooms;
 	});
 })

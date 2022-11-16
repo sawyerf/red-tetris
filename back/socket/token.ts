@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 
 require('dotenv').config();
 
-const secret: jwt.Secret = process.env.JWT_TOKEN || '';
+const secret: jwt.Secret = process.env.JWT_TOKEN || 'tester';
 
 export type TokenPayload = {
 	username: string;

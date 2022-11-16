@@ -4,7 +4,7 @@
 	</div>
 	<div class="home-main create">
 		<p class="create"> Name Room </p>
-		<input placeholder="Create Room" :value="roomName"
+		<input id="input-room-name" placeholder="Create Room" :value="roomName"
 			@input="(event: Event) => roomName = event?.target?.value" v-on:keyup.enter="onEnterRoom" autofocus/>
 
 		<p class="create"> Speed Gravity </p>
@@ -50,7 +50,6 @@ const inputSpeed = (event: Event) => {
 
 const calcSizeWidth = (size: any): string => {
 	const sizeWidth = (80 * (size.sizeColumn + 2)) / (size.sizeRow + 2);
-	console.log(`${sizeWidth}vh`)
 	return `${sizeWidth}vh`
 }
 
@@ -61,7 +60,6 @@ watch(sizeTerrain, (size) => {
 const onClickCreate = () => {
 	let speedRet = Number(speed.value);
 
-	console.log('test')
 	if (speedRet > 1000) speedRet = 1000;
 	if (speedRet < 100) speedRet = 100;
 	io.emit('room/create', {

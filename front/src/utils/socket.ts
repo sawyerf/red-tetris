@@ -5,34 +5,35 @@ import router from '@/utils/router';
 
 let socket: Socket;
 
-export const connectSocket = (test: boolean = false): Socket => {
+const routeByToken = () => {
+	const payload: TokenPayload | null = Token.get();
+	if (payload?.username == '') {
+		router.replace('/');
+	} else if (payload?.room == '') {
+		if (router.currentRoute.value.path == '/create') return;
+		router.replace('/list');
+	} else {
+		router.replace('/game');
+	}
+}
+
+export const connectSocket = (test: any = undefined): Socket => {
 	if (socket) {
 		return socket;
 	}
+	if (test) {
+		socket = test;
+		return socket
+	}
 
 	socket = io('ws://localhost:3000');
-
-	if (test === true) return socket;
-	console.log('--------------------------------------')
-
-	const routeByToken = () => {
-		const payload: TokenPayload|null = Token.get();
-		if (payload?.username == '') {
-			router.replace('/');
-		} else if (payload?.room == '') {
-			if (router.currentRoute.value.path == '/create') return ;
-			router.replace('/list');
-		} else {
-			router.replace('/game');
-		}
-	}
 
 	socket.on('connect', () => {
 		const token = Token.getRaw();
 
 		if (token) {
 			routeByToken();
-			socket.emit('token/set', {token: token})
+			socket.emit('token/set', { token: token })
 		} else {
 			socket.emit('token/get');
 		}

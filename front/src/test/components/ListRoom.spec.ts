@@ -1,34 +1,47 @@
-import { shallowMount } from "@vue/test-utils";
+import { flushPromises, mount, shallowMount, VueWrapper } from "@vue/test-utils";
 import { describe, test, expect, beforeAll } from 'vitest';
-import { createServer } from "http";
-import { Server, Socket } from "socket.io";
+import MockedSocket from 'socket.io-mock';
 
-import ListRoom from '@/components/ListRoom.vue'
+import ListRoom from '@/components/ListRoom.vue';
 import { connectSocket } from "@/utils/socket";
 
 describe('List Room', () => {
-	let io: Server;
 	const roomTest = {
 		uid: 'test-uid',
 		name: 'testosterone',
 		numberPlayer: 123,
 		maxPlayer: 123
 	}
+	let sock: any;
+	let wrapper: any;
 
-			// sock.on('room/list', () => {
-			// 	console.log('desbarres');
-			// 	sock.emit('room/list', {
-			// 		rooms: [
-			// 			roomTest
-			// 		]
-			// 	})
-			// })
+	beforeAll(() => {
+		sock = new MockedSocket();
+		connectSocket(sock.socketClient);
+		sock.on('room/list', () => {
+			console.log('desbarres');
+			sock.emit('room/list', {
+				rooms: [
+					roomTest
+				]
+			})
+		})
+	})
 
 	test('Mount List', () => {
-		const wrapper = shallowMount(ListRoom);
+		sock.on('room/list', () => {
+			console.log('deux barres');
+		})
 
-		console.log('lol', wrapper.text());
-		expect(wrapper.find('.room-name').text()).toBe(roomTest.name);
-		expect(wrapper.find('.room-player').text()).toBe(`${roomTest.numberPlayer}/${roomTest.maxPlayer}`);
+		wrapper = shallowMount(ListRoom);
+
+		expect(true).toBe(true);
+		// while (1) {
+		// 	if (wrapper.html() != '<ul></ul>') break;
+		// }
+		// console.log(wrapper.html())
+		// wrapper.trigger('click')
+		// expect(wrapper.get('.room-name').text()).toBe(roomTest.name);
+		// expect(wrapper.find('.room-player').text()).toBe(`${roomTest.numberPlayer}/${roomTest.maxPlayer}`);
 	})
 })

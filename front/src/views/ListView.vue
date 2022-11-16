@@ -11,7 +11,6 @@ import ListRoom from '@/components/ListRoom.vue';
 import router from '@/utils/router';
 
 const onClickCreate = () => {
-	console.log('de')
 	router.push('/create')
 }
 </script>

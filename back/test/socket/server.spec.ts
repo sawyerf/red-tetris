@@ -1,26 +1,27 @@
 import { Socket } from "socket.io-client";
 import Client from "socket.io-client";
 import jwt from 'jsonwebtoken';
-import Token from "../../socket/token";
 
 import '../../app';
+import Token from "../../socket/token";
 import type { TokenPayload } from "../../socket/token";
 
 describe('Server Test', () => {
 	let clientSocket: Socket;
-	let jwtToken: string = '';
 	const userName: string = 'desbarres';
 	const roomName: string = 'Big Room';
 
-
 	beforeAll((done) => {
-		clientSocket = Client(`http://localhost:3000`);
+		clientSocket = Client(`ws://localhost:3000`);
 		clientSocket.on("connect", done);
 	});
 
-	afterAll(() => {
-		global.io.close();
+	afterAll((done) => {
+		clientSocket.disconnect();
 		clientSocket.close();
+		global.io.close();
+		global.server.close();
+		done()
 	})
 
 	test('Get Token', (done) => {
@@ -70,7 +71,14 @@ describe('Server Test', () => {
 			done();
 		})
 
-		clientSocket.emit('room/create', { name: roomName });
+		clientSocket.emit('room/create', {
+			name: roomName,
+			speed: 700,
+			sizeTerrain: {
+				sizeRow: 20,
+				sizeColumn: 10
+			},
+		});
 	})
 
 	test('Get Room Player', (done) => {
@@ -96,7 +104,6 @@ describe('Server Test', () => {
 		clientSocket.emit('game/key', { key: 'Enter' });
 	})
 
-	jest.setTimeout(20 * 1000)
 	test('Play Game', (done) => {
 		clientSocket.on('game/terrain', (data: { terrain: number[][] }) => {
 			expect(data.terrain.length).toBe(20);
@@ -113,7 +120,7 @@ describe('Server Test', () => {
 		})
 		clientSocket.emit('game/key', { key: 'ArrowUp' });
 		clientSocket.emit('game/key', { key: ' ' });
-		for (let i = 0; i < 20; i++) {
+		for (let i = 0; i < 25; i++) {
 			clientSocket.emit('game/key', { key: 'ArrowRight' });
 			clientSocket.emit('game/key', { key: 'ArrowRight' });
 			clientSocket.emit('game/key', { key: 'ArrowRight' });

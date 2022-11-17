@@ -9,7 +9,9 @@ import SocketManager from './socket/ServerManager';
 config();
 
 declare global {
-	var io: ServerIO
+	var io: ServerIO;
+    var app: Application;
+    var server: Server;
 }
 
 const app: Application = express();
@@ -34,9 +36,13 @@ const io: ServerIO = new ServerIO(server, {
 });
 
 global.io = io;
+global.server = server;
+global.app = app;
 console.log('Start Socket');
 
 io.on('connection', (socket: Socket) => {
     const socketG = new SocketManager(io, socket);
-    io.on('disconnect', () => console.log(socket.id, 'disconnect'));
+    socket.on('disconnect', () => {
+        socket.disconnect()
+    });
 });

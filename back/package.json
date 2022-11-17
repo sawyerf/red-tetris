@@ -7,7 +7,7 @@
     "build": "tsc",
     "dev": "nodemon app.ts --trace-warnings",
     "start": "node ./app.js",
-    "test": "jest --config ./jest.config.json --coverage"
+    "test": "jest --config ./jest.config.json --coverage --forceExit"
   },
   "author": "",
   "license": "ISC",

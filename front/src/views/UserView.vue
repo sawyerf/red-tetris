@@ -1,7 +1,7 @@
 <template>
 	<div class="home-main">
 		<img class="logo" src="https://static.wikia.nocookie.net/logopedia/images/f/f8/Tetris_1997.svg" alt="logo" />
-		<input class="input-name" :value="userName" @input="(event) => userName = event.target.value" v-on:keyup.enter="onEnterName" placeholder="name"/>
+		<input class="input-name" :value="userName" @input="(event) => userName = event?.target?.value" @keyup.enter="onEnterName" placeholder="name"/>
 	</div>
 </template>
 

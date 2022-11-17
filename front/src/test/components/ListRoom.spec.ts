@@ -19,7 +19,6 @@ describe('List Room', () => {
 		sock = new MockedSocket();
 		connectSocket(sock.socketClient);
 		sock.on('room/list', () => {
-			console.log('desbarres');
 			sock.emit('room/list', {
 				rooms: [
 					roomTest
@@ -29,19 +28,13 @@ describe('List Room', () => {
 	})
 
 	test('Mount List', () => {
-		sock.on('room/list', () => {
-			console.log('deux barres');
-		})
-
 		wrapper = shallowMount(ListRoom);
 
-		expect(true).toBe(true);
-		// while (1) {
-		// 	if (wrapper.html() != '<ul></ul>') break;
-		// }
-		// console.log(wrapper.html())
-		// wrapper.trigger('click')
-		// expect(wrapper.get('.room-name').text()).toBe(roomTest.name);
-		// expect(wrapper.find('.room-player').text()).toBe(`${roomTest.numberPlayer}/${roomTest.maxPlayer}`);
+		sock.on('room/join', (data) => {
+			expect(data.roomId).toBe(roomTest.uid);
+		});
+		expect(wrapper.find('.room-name').text()).toBe(roomTest.name);
+		expect(wrapper.find('.room-player').text()).toBe(`${roomTest.numberPlayer}/${roomTest.maxPlayer}`);
+		wrapper.find('.room-item').trigger('click');
 	})
 })

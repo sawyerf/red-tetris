@@ -5,10 +5,10 @@
 	<div class="home-main create">
 		<p class="create"> Name Room </p>
 		<input id="input-room-name" placeholder="Create Room" :value="roomName"
-			@input="(event: Event) => roomName = event?.target?.value" v-on:keyup.enter="onEnterRoom" autofocus/>
+			@input="(event: Event) => roomName = event?.target?.value" @keyup.enter="onEnterRoom" autofocus/>
 
 		<p class="create"> Speed Gravity </p>
-		<input type="number" placeholder="Speed" v-model.number="speed"
+		<input id="input-speed" type="number" placeholder="Speed" v-model.number="speed"
 			@input="inputSpeed" @keypress="isNumber">
 
 		<p class="create"> Size Terrain </p>
@@ -18,7 +18,7 @@
 			<option :value="{ sizeRow: 15, sizeColumn: 10 }">15x10</option>
 			<option :value="{ sizeRow: 10, sizeColumn: 5 }">10x5</option>
 		</select>
-		<button style="margin-top: 30px;" v-on:click="onClickCreate"> Create </button>
+		<button style="margin-top: 30px;" @click="onClickCreate"> Create </button>
 	</div>
 </template>
 

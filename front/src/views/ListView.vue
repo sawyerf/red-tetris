@@ -2,7 +2,7 @@
 	<div class="home-main">
 		<img class="logo" src="https://static.wikia.nocookie.net/logopedia/images/f/f8/Tetris_1997.svg" alt="logo" />
 		<ListRoom></ListRoom>
-		<button v-on:click="onClickCreate">Create Room</button>
+		<button @click="onClickCreate">Create Room</button>
 	</div>
 </template>
 

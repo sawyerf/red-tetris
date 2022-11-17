@@ -108,7 +108,6 @@ class Room {
 	}
 
 	key(playerId: string, key: string) {
-		// console.log('key: ', key, ', player: ', player);
 		const game = this.games.find((item) => item.uid == playerId);
 
 		if (!game) return ;

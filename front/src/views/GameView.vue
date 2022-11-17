@@ -3,7 +3,7 @@
 	<!-- <img class="logo" src="https://static.wikia.nocookie.net/logopedia/images/f/f8/Tetris_1997.svg" alt="logo" /> -->
 	<div class="game-main">
 		<div v-if="competitors.length" class="opponents">
-			<div class="opponent" v-for="(competitor, index) in competitors" v-bind:key="index" >
+			<div class="opponent" v-for="(competitor, index) in competitors" :key="index" >
 				<p class="opponent">{{competitor?.name}}</p>
 				<GameItem :terrain=competitor?.terrain :is-border=false :size-width=calcSizeWidth(competitor?.terrain,22) :size-height="'22vh'"/>
 				<p class="opponent">{{competitor?.score}}</p>
@@ -11,7 +11,7 @@
 		</div>
 		<div v-else class="info-players-game">
 			<p class="info-players-game">{{infoPlayer.numberPlayer}}</p>
-			<p class="info-players-game" v-for="(name, index) in infoPlayer.names" v-bind:key="index"> {{name}}</p>
+			<p class="info-players-game" v-for="(name, index) in infoPlayer.names" :key="index"> {{name}}</p>
 		</div>
 		<div class="myTerrain">
 			<GameItem :terrain=terrain :is-border=true :size-width=calcSizeWidth(terrain,80) :size-height="'80vh'" />

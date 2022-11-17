@@ -30,6 +30,23 @@ p.info-players-game {
     text-align: center;
 }
 
+.info-invit {
+    color: white;
+    font-size: 30px;
+    margin-top: auto;
+    text-align: center;
+    content: "link";
+}
+
+.info-invit:hover:before {
+    color: orange;
+    content: "Copy";
+}
+
+.info-invit:before {
+    content: "link";
+}
+
 .opponents {
     display: grid;
     justify-content: center;

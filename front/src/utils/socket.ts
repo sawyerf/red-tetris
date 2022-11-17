@@ -7,7 +7,9 @@ let socket: Socket;
 
 const routeByToken = () => {
 	const payload: TokenPayload | null = Token.get();
-	if (payload?.username == '') {
+	if (router.currentRoute.value.hash.match(/#.+?\[.+?\]/) && !payload?.room) {
+		return ;
+	} else if (payload?.username == '') {
 		router.replace('/');
 	} else if (payload?.room == '') {
 		if (router.currentRoute.value.path == '/create') return;

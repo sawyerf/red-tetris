@@ -1,6 +1,6 @@
 <template>
 	<ul>
-		<li class="room-item" v-for="(room, index) in listRoom" :key="room.uid" @click="() => joinHandle(room.uid)" >
+		<li class="room-item" v-for="room of listRoom" :key="room.uid" @click="() => joinHandle(room.uid)" >
 			<p class="room-name">{{room.name}}</p> <p class="room-player">{{room.numberPlayer}}/{{room.maxPlayer}}</p>
 		</li>
 	</ul>
@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import { connectSocket } from '@/utils/socket';
-import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
+import { onBeforeMount, onUnmounted, ref } from 'vue';
 import type { Ref } from 'vue';
 
 type roomType = {

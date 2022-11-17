@@ -5,7 +5,7 @@
 	<div class="home-main create">
 		<p class="create"> Name Room </p>
 		<input id="input-room-name" placeholder="Create Room" :value="roomName"
-			@input="(event: Event) => roomName = event?.target?.value" @keyup.enter="onEnterRoom" autofocus/>
+			@input="(event: Event) => roomName = (event?.target as HTMLTextAreaElement)?.value" autofocus/>
 
 		<p class="create"> Speed Gravity </p>
 		<input id="input-speed" type="number" placeholder="Speed" v-model.number="speed"

@@ -6,7 +6,7 @@ import UserView from '@/views/UserView.vue';
 import { connectSocket } from "@/utils/socket";
 
 describe('UsersView',  () => {
-	let sock: MockedSocket;
+	let sock: any;
 	const nameTest = 'TeSt NaMe';
 
 	beforeAll(() => {

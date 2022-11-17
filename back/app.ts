@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-import express, { Application, NextFunction, Request, Response } from 'express';
+import express, { Application } from 'express';
 import { Server as ServerIO } from "socket.io";
 import type { Socket } from 'socket.io';
 import { Server } from 'http';
@@ -13,6 +13,17 @@ declare global {
 }
 
 const app: Application = express();
+
+const sendIndex = (req: any, res: any) => {
+    res.sendFile('index.html', {'root': __dirname + '/../front/dist/'})
+};
+
+app.get("/", sendIndex);
+app.get("/list", sendIndex);
+app.get("/create", sendIndex);
+app.get("/game", sendIndex);
+app.use(express.static(process.cwd() + "/../front/dist/"));
+
 const server: Server = app.listen(3000);
 
 const io: ServerIO = new ServerIO(server, {

@@ -1,4 +1,4 @@
-import { flushPromises, mount, shallowMount, VueWrapper } from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
 import { describe, test, expect, beforeAll } from 'vitest';
 import MockedSocket from 'socket.io-mock';
 
@@ -30,7 +30,7 @@ describe('List Room', () => {
 	test('Mount List', () => {
 		wrapper = shallowMount(ListRoom);
 
-		sock.on('room/join', (data) => {
+		sock.on('room/join', (data: {roomId: string}) => {
 			expect(data.roomId).toBe(roomTest.uid);
 		});
 		expect(wrapper.find('.room-name').text()).toBe(roomTest.name);

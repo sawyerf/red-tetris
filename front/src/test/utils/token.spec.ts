@@ -1,7 +1,8 @@
+import jwt  from 'jsonwebtoken'
+import { describe, test, expect } from 'vitest';
+
 import Token from "@/utils/token";
-import { TokenPayload } from "@/utils/token";
-import jwt, { TokenExpiredError } from 'jsonwebtoken'
-import { describe, test, expect, beforeAll } from 'vitest';
+import type { TokenPayload } from "@/utils/token";
 
 describe('Token', () => {
 	const payload: TokenPayload = {

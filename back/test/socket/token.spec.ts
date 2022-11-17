@@ -1,6 +1,8 @@
 import { v4 } from "uuid";
-import Token, { TokenPayload } from "../../socket/token";
 import jwt from 'jsonwebtoken';
+
+import Token from "../../socket/token";
+import type { TokenPayload } from "../../socket/token";
 
 describe('jwt Token', () => {
 	let payload: TokenPayload = {

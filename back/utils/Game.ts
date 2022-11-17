@@ -1,10 +1,10 @@
 import { threadId } from 'worker_threads';
+import type { BroadcastOperator, Socket } from 'socket.io';
+import { v4 } from 'uuid';
+
 import Terrain from './Terrain';
 import Tetrimino from './Tetrimino';
-import type { BroadcastOperator, Socket } from 'socket.io';
-import { cp } from 'fs';
-import { TokenPayload } from '../socket/token';
-import { v4 } from 'uuid';
+import type { TokenPayload } from '../socket/token';
 import { Params } from './Room';
 
 class Game {

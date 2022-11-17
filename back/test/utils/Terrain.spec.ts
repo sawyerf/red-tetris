@@ -15,7 +15,7 @@ describe('Test Terrain', () => {
 
 	test('Put/Del Piece', () => {
 		const terrain: Terrain = new Terrain(20, 10);
-		const tetrimo: Tetrimino = new Tetrimino(0);
+		const tetrimo: Tetrimino = new Tetrimino(0, 12);
 
 
 		terrain.putPiece(tetrimo)
@@ -26,7 +26,7 @@ describe('Test Terrain', () => {
 
 	test('Del Line', () => {
 		const terrain: Terrain = new Terrain(20, 10);
-		const tetrimo: Tetrimino = new Tetrimino(0);
+		const tetrimo: Tetrimino = new Tetrimino(0, 12);
 
 		terrain.terrain[0] = terrain.terrain[0].map((block) => 1)
 		const score = terrain.delFullLine();

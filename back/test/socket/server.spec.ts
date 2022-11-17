@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import Token from "../../socket/token";
 
 import '../../app';
-import { TokenPayload } from "../../socket/token";
+import type { TokenPayload } from "../../socket/token";
 
 describe('Server Test', () => {
 	let clientSocket: Socket;
@@ -25,7 +25,7 @@ describe('Server Test', () => {
 
 	test('Get Token', (done) => {
 		clientSocket.on('token/new', (data) => {
-			const token: TokenPayload = jwt.decode(data.token);
+			const token: TokenPayload = (jwt.decode(data.token) as TokenPayload);
 			expect(token.iat > 0).toBe(true);
 			clientSocket.off('token/new');
 			done();
@@ -35,7 +35,7 @@ describe('Server Test', () => {
 
 	test('Set Token', (done) => {
 		clientSocket.on('token/new', (data) => {
-			const token: TokenPayload = jwt.decode(data.token);
+			const token: TokenPayload = (jwt.decode(data.token) as TokenPayload);
 			expect(token.iat).toBe(1234);
 			expect(token.username).toBe('testName');
 			clientSocket.off('token/new');
@@ -52,7 +52,7 @@ describe('Server Test', () => {
 
 	test('Set username', (done) => {
 		clientSocket.on('token/new', (data) => {
-			const token: TokenPayload = jwt.decode(data.token);
+			const token: TokenPayload = (jwt.decode(data.token) as TokenPayload);
 			expect(token.username).toBe(userName);
 			clientSocket.off('token/new');
 			done();
@@ -63,7 +63,7 @@ describe('Server Test', () => {
 
 	test('Create Room', (done) => {
 		clientSocket.on('token/new', (data) => {
-			const token: TokenPayload = jwt.decode(data.token);
+			const token: TokenPayload = (jwt.decode(data.token) as TokenPayload);
 			expect(token.room != '').toBe(true);
 			expect(token.idPlayer != '').toBe(true);
 			clientSocket.off('token/new');
@@ -129,7 +129,7 @@ describe('Server Test', () => {
 
 	test('Leave Room', (done) => {
 		clientSocket.on('token/new', (data) => {
-			const token: TokenPayload = jwt.decode(data.token);
+			const token: TokenPayload = (jwt.decode(data.token) as TokenPayload);
 			expect(token.room).toBe('');
 			expect(token.idPlayer).toBe('');
 			clientSocket.off('token/new');

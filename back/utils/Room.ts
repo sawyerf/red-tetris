@@ -1,10 +1,8 @@
 import type { BroadcastOperator, Server, Socket } from "socket.io";
-import Game from "./Game";
 import { v4 } from 'uuid';
-import { threadId } from "worker_threads";
-import { TokenPayload } from "../socket/token";
-import Tetrimino from "./Tetrimino";
-import { PassThrough } from "stream";
+import Game from "./Game";
+
+import type { TokenPayload } from "../socket/token";
 
 export type Params = {
 	sizeRow: number,

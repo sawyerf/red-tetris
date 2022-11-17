@@ -6,7 +6,7 @@ import CreateRoomView from '@/views/CreateRoomView.vue';
 import { connectSocket } from "@/utils/socket";
 
 describe('Create Room', () => {
-	let sock: MockedSocket;
+	let sock: any;
 	const roomNameTest = 'rOoM TeSt NaMe';
 
 	beforeAll(() => {
@@ -26,12 +26,12 @@ describe('Create Room', () => {
 		const inputSpeed = wrapper.find('#input-speed');
 		const button = wrapper.find('button');
 		inputName.setValue(roomNameTest);
-		expect(inputSpeed.element.value).toBe('700')
+		expect((inputSpeed.element as HTMLInputElement).value).toBe('700')
 		inputSpeed.setValue('725');
-		expect(inputSpeed.element.value).toBe('725')
+		expect((inputSpeed.element as HTMLInputElement).value).toBe('725')
 		inputSpeed.trigger('keypress', { key: 'a' })
 		inputSpeed.setValue('dsqd');
-		expect(inputSpeed.element.value).toBe('')
+		expect((inputSpeed.element as HTMLInputElement).value).toBe('')
 		button.trigger('click');
 	})
 })

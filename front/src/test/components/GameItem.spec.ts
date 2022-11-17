@@ -1,7 +1,8 @@
 import { shallowMount } from "@vue/test-utils";
+import { describe, test, expect } from 'vitest';
+
 import GameItem from '@/components/GameItem.vue';
 import { createTerrain } from '@/utils/terrain';
-import { describe, test, expect } from 'vitest';
 
 describe("Game Item", () => {
     test("Mount Game", () => {

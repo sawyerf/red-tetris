@@ -37,8 +37,6 @@ import GameItem from '../components/GameItem.vue';
 import Token from '@/utils/token';
 import { connectSocket } from '@/utils/socket';
 import { createTerrain } from '@/utils/terrain'
-import router from '@/utils/router';
-import useClip from 'vue-clipboard3';
 
 type Competitor = {
 	name: string,
@@ -123,12 +121,9 @@ const keyHandler = (event: KeyboardEvent) => {
 const getLink = () => {
 	const token = Token.get();
 
-	console.log(router)
 	if (token) {
 		const url = `${location.protocol}//${location.host}/#${token.room}[${token.username}]`
-		console.log(url)
-		const { toClipboard } = useClip()
-		toClipboard(url);
+		navigator.clipboard.writeText(url);
 	}
 }
 

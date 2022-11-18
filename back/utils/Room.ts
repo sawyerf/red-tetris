@@ -57,9 +57,9 @@ class Room {
 	}
 
 	start() {
-		this.checkFinish = setInterval(() => this.isEnd(), 1000)
-		if (this.games.every((item) => !item.isStart)) {
+		if (!this.isStart) {
 			const seed = Math.random()
+			this.checkFinish = setInterval(() => this.isEnd(), 1000)
 			for (let game of this.games) {
 				game.startGame(seed);
 			}

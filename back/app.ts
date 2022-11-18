@@ -14,14 +14,14 @@ declare global {
 const app: Application = express();
 
 const sendIndex = (req: any, res: any) => {
-    res.sendFile('index.html', {'root': __dirname + '/../front/dist/'})
+    res.sendFile('index.html', {'root': __dirname + '/../../front/dist/'})
 };
 
 app.get("/", sendIndex);
 app.get("/list", sendIndex);
 app.get("/create", sendIndex);
 app.get("/game", sendIndex);
-app.use(express.static(__dirname + "/../front/dist/"));
+app.use(express.static(__dirname + "/../../front/dist/"));
 
 const server: Server = app.listen(3000);
 

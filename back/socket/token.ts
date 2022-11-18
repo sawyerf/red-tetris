@@ -1,7 +1,9 @@
 import jwt from 'jsonwebtoken';
 import { v4 } from 'uuid';
 
-const secret: jwt.Secret = v4();
+require('dotenv').config();
+
+const secret: jwt.Secret = process.env.SECRET_JWT || v4();
 
 export type TokenPayload = {
 	username: string;

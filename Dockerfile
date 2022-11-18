@@ -11,4 +11,4 @@ RUN cd back && npm i && npm run build
 
 EXPOSE 3000
 
-CMD ["node", "./back/app.js"]
+CMD ["node", "./back/build/app.js"]

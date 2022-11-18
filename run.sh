@@ -1,7 +1,3 @@
-cd front
-npm run build
-
-cd ..
-cd back
-npm run build
-npm run start
+docker pull node:latest
+docker build -t red-tetris .
+docker run -p 3000:3000 -d red-tetris

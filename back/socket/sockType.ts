@@ -6,3 +6,7 @@ export type SockCreateRoom = {
 		sizeColumn: number
 	},
 }
+
+export type SetName = {
+	name: string;
+}

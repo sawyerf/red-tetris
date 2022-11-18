@@ -6,7 +6,7 @@
     "devm": "vite --host 192.168.56.2",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
-    "test:unit": "vitest --environment jsdom --root src/",
+    "test:unit": "vitest --environment jsdom --root src/ --coverage",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"

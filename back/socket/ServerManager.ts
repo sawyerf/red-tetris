@@ -2,14 +2,14 @@ import type { Socket, Server } from 'socket.io';
 import Room, { Params } from '../utils/Room';
 import Token from './token'
 import type { TokenPayload } from './token'
-import { SockCreateRoom } from './sockType';
+import { SetName, SockCreateRoom } from './sockType';
 
 const rooms: Room[] = [];
 
 class SocketManager {
 	socket: Socket;
 	io: Server;
-	payload: TokenPayload = {username: '', idPlayer: '', room: '', iat: Date.now()};
+	payload: TokenPayload = { username: '', idPlayer: '', room: '', iat: Date.now() };
 	handleActivated: string[] = [];
 	room: Room | undefined;
 
@@ -21,10 +21,10 @@ class SocketManager {
 	}
 
 	sendToken() {
-		this.socket.emit('token/new', {token: Token.createToken(this.payload)});
+		this.socket.emit('token/new', { token: Token.createToken(this.payload) });
 	}
 
-	sendListRooms () {
+	sendListRooms() {
 		const roomsList = rooms.filter((room) => !room.isStart).map((room) => {
 			return {
 				name: room.name,
@@ -33,11 +33,11 @@ class SocketManager {
 				maxPlayer: room.params.maxPlayer,
 			}
 		})
-		this.io.sockets.emit('room/list', {rooms: roomsList});
+		this.io.sockets.emit('room/list', { rooms: roomsList });
 	}
 
 	tokenHandle() {
-		if (this.handleActivated.indexOf('tokenHandle') > -1) return ;
+		if (this.handleActivated.indexOf('tokenHandle') > -1) return;
 		this.handleActivated.push('tokenHandle');
 
 		this.socket.on('token/get', () => {
@@ -68,25 +68,33 @@ class SocketManager {
 	}
 
 	userHandle() {
-		if (this.handleActivated.indexOf('userHandle') > -1) return ;
+		if (this.handleActivated.indexOf('userHandle') > -1) return;
 		this.handleActivated.push('userHandle');
-	
-		this.socket.on('user/setname', (data) => {
-			this.payload.username = data.name;
+
+		this.socket.on('user/setname', (data: SetName) => {
+			this.payload.username = data.name.slice(0, 10);
 			if (this.payload.username != '') this.RoomHandle();
 			this.sendToken();
 		})
 	}
 
 	RoomHandle() {
-		if (this.handleActivated.indexOf('RoomHandle') > -1) return ;
+		if (this.handleActivated.indexOf('RoomHandle') > -1) return;
 		this.handleActivated.push('RoomHandle');
 
 		this.sendListRooms();
 		this.socket.on('room/list', () => this.sendListRooms());
 
 		this.socket.on('room/create', (data: SockCreateRoom) => {
-			if (!data?.name || this.room) return ;
+			const acceptSizeTerrain = [
+				{ sizeRow: 20, sizeColumn: 15 },
+				{ sizeRow: 20, sizeColumn: 10 },
+				{ sizeRow: 15, sizeColumn: 10 },
+				{ sizeRow: 10, sizeColumn: 5 }];
+
+			if (!data?.name || this.room) return;
+
+			if (!acceptSizeTerrain.find((size: any) => size.sizeRow == data.sizeTerrain.sizeRow && size.sizeColumn == data.sizeTerrain.sizeColumn)) return;
 			const params: Params = {
 				sizeRow: data.sizeTerrain.sizeRow,
 				sizeColumn: data.sizeTerrain.sizeColumn,
@@ -99,7 +107,7 @@ class SocketManager {
 			if (params.speedMin > params.speedStart) params.speedMin = params.speedStart
 			if (params.speedMin < 100) params.speedMin = 100
 
-			const room: Room = new Room(this.io, data.name, params);
+			const room: Room = new Room(this.io, data.name.slice(0, 10), params);
 			rooms.push(room);
 			this.payload.idPlayer = room.addPlayer(this.socket, this.payload);
 			this.payload.room = room.uid;
@@ -113,8 +121,8 @@ class SocketManager {
 			this.room?.sendPlayers()
 		})
 
-		this.socket.on('room/join', (data) => {
-			if (this.room) return ;
+		this.socket.on('room/join', (data: { roomId: string }) => {
+			if (this.room) return;
 			this.room = rooms.find((room) => room.uid == data.roomId);
 			if (this.room) {
 				this.payload.idPlayer = this.room.addPlayer(this.socket, this.payload);
@@ -138,10 +146,10 @@ class SocketManager {
 	}
 
 	GameHandle() {
-		if (this.handleActivated.indexOf('GameHandle') > -1) return ;
+		if (this.handleActivated.indexOf('GameHandle') > -1) return;
 		this.handleActivated.push('GameHandle');
 
-		this.socket.on('game/key', (data) => this.room?.key(this.payload.idPlayer, data.key))
+		this.socket.on('game/key', (data: { key: string }) => this.room?.key(this.payload.idPlayer, data.key))
 	}
 }
 

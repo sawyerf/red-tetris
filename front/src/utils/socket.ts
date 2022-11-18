@@ -28,7 +28,7 @@ export const connectSocket = (test: any = undefined): Socket => {
 		return socket
 	}
 
-	socket = io(`ws://${location.hostname}:${location.port}`);
+	socket = io(`ws://${location.hostname}:3000`);
 
 	socket.on('connect', () => {
 		const token = Token.getRaw();

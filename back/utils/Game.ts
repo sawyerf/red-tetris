@@ -16,6 +16,8 @@ class Game {
 	nextTetrimo: Tetrimino = new Tetrimino(0, 1);
 	// Player info
 	score: number = 0;
+	isConnect: boolean = true;
+	timeoutDisconnectId: NodeJS.Timer|undefined;
 	params: Params;
 	infoPlayer: TokenPayload;
 	// Speed

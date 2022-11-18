@@ -18,7 +18,7 @@ class Room {
 	games: Game[] = [];
 	isStart: boolean = false;
 	params: Params;
-	checkFinish: NodeJS.Timer|undefined;
+	checkFinish: NodeJS.Timer | undefined;
 	winner: Game | undefined;
 	socket: BroadcastOperator<any, any>;
 
@@ -37,7 +37,7 @@ class Room {
 		if (!this.games.length) {
 			this.isStart = false;
 			clearInterval(this.checkFinish);
-			return ;
+			return;
 		} else if (!isUp.length) {
 			for (let game of this.games) {
 				if (game.score > winner.score) {
@@ -49,11 +49,11 @@ class Room {
 			winner = isUp[0];
 			winner.stopGame();
 		} else {
-			return ;
+			return;
 		}
 		this.isStart = false;
 		clearInterval(this.checkFinish);
-		this.socket.emit('game/end', {winnerName: winner.infoPlayer.username, score: winner.score})
+		this.socket.emit('game/end', { winnerName: winner.infoPlayer.username, score: winner.score })
 	}
 
 	start() {
@@ -68,7 +68,7 @@ class Room {
 	}
 
 	sendPlayers() {
-		if (this.isStart) return ;
+		if (this.isStart) return;
 		this.socket.emit('room/players', {
 			numberPlayer: `${this.games.length} / ${this.params.maxPlayer}`,
 			names: this.games.map((item) => item.infoPlayer.username),
@@ -84,11 +84,18 @@ class Room {
 		return game.uid;
 	}
 
-	updatePlayer(playerId: string, socketMe: Socket) {
+	updatePlayer(playerId: string, socketMe: Socket): boolean {
 		const game = this.games.find((item) => item.uid == playerId)
 		if (game) {
+			if (!game.isConnect) {
+				clearTimeout(game.timeoutDisconnectId);
+				game.isConnect = true;
+			}
 			game.socketMe = socketMe;
+			socketMe.join(this.uid);
+			return true;
 		}
+		return false;
 	}
 
 	leave(playerId: string) {
@@ -105,10 +112,21 @@ class Room {
 		}
 	}
 
+	disConnect(playerId: string) {
+		const game = this.games.find((item) => item.uid == playerId)
+
+		if (game) {
+			game.isConnect = false
+			game.timeoutDisconnectId = setTimeout(() => {
+				if (!game.isConnect) this.leave(playerId)
+			}, 5 * 1000)
+		}
+	}
+
 	key(playerId: string, key: string) {
 		const game = this.games.find((item) => item.uid == playerId);
 
-		if (!game) return ;
+		if (!game) return;
 		if (game.isAdmin && key == 'Enter') this.start();
 		if (game.isStart) {
 			if (key == 'ArrowDown') game.fallPilePiece();

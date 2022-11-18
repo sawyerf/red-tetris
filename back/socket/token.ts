@@ -1,8 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { v4 } from 'uuid';
 
-require('dotenv').config();
-
 const secret: jwt.Secret = v4();
 
 export type TokenPayload = {

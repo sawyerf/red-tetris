@@ -1,12 +1,9 @@
-import { config } from 'dotenv';
 import express, { Application } from 'express';
 import { Server as ServerIO } from "socket.io";
 import type { Socket } from 'socket.io';
 import { Server } from 'http';
 
 import SocketManager from './socket/ServerManager';
-
-config();
 
 declare global {
 	var io: ServerIO;
@@ -24,7 +21,7 @@ app.get("/", sendIndex);
 app.get("/list", sendIndex);
 app.get("/create", sendIndex);
 app.get("/game", sendIndex);
-app.use(express.static(process.cwd() + "/../front/dist/"));
+app.use(express.static(__dirname + "/../front/dist/"));
 
 const server: Server = app.listen(3000);
 
@@ -42,7 +39,4 @@ console.log('Start Socket');
 
 io.on('connection', (socket: Socket) => {
     const socketG = new SocketManager(io, socket);
-    socket.on('disconnect', () => {
-        socket.disconnect()
-    });
 });

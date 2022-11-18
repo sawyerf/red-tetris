@@ -59,7 +59,6 @@ const calcSizeWidth = (terrainCalc: number[][], sizeHeight: number): string => {
 	const sizeRow = terrainCalc.length;
 	const sizeWidth = (sizeHeight * (sizeColumn + 2)) / (sizeRow + 2);
 
-	console.log(`${sizeWidth}vh`)
 	return `${sizeWidth}vh`
 }
 

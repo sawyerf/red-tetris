@@ -28,7 +28,7 @@ export const connectSocket = (test: any = undefined): Socket => {
 		return socket
 	}
 
-	socket = io(`ws://${location.hostname}:3000`);
+	socket = io(import.meta.env.VITE_SERVER_HOST as string);
 
 	socket.on('connect', () => {
 		const token = Token.getRaw();

@@ -25,6 +25,11 @@ class SocketManager {
 	}
 
 	sendListRooms() {
+		for (const room of rooms) {
+			if (room.games.length === 0) {
+				rooms.splice(rooms.indexOf(room), 1);
+			}
+		}
 		const roomsList = rooms.filter((room) => !room.isStart).map((room) => {
 			return {
 				name: room.name,
@@ -40,6 +45,13 @@ class SocketManager {
 		if (this.handleActivated.indexOf('tokenHandle') > -1) return;
 		this.handleActivated.push('tokenHandle');
 
+    	this.socket.on('disconnect', () => {
+			if (this.room) {
+				this.room.disConnect(this.payload.idPlayer);
+			}
+    	    this.socket.disconnect();
+    	});
+
 		this.socket.on('token/get', () => {
 			this.sendToken();
 			this.userHandle();
@@ -54,11 +66,17 @@ class SocketManager {
 				this.payload = payload;
 				this.room = rooms.find((room) => room.uid == this.payload.room);
 				if (this.room) {
-					this.room.updatePlayer(this.payload.idPlayer, this.socket)
-					this.socket.join(payload.room);
-					this.GameHandle();
+					if (this.room.updatePlayer(this.payload.idPlayer, this.socket)){
+						this.GameHandle();
+					} else {
+						this.payload.room = ''
+						this.payload.idPlayer = ''
+						this.room = undefined;
+						this.sendToken();
+					}
 				} else {
 					this.payload.room = ''
+					this.payload.idPlayer = ''
 					this.sendToken();
 				}
 			}

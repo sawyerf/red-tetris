@@ -2,8 +2,7 @@
   "name": "red-tetris",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
-    "devm": "vite --host 192.168.56.2",
+    "dev": "vite --host 0.0.0.0",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
     "test:unit": "vitest --environment jsdom --root src/ --coverage",

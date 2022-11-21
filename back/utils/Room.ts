@@ -103,6 +103,7 @@ class Room {
 		if (game) {
 			const indexGame = this.games.indexOf(game);
 			game.stopGame();
+			this.isEnd();
 			game.socketMe.leave(this.uid);
 			this.games.splice(indexGame, 1);
 			if (!indexGame && this.games[0]) {

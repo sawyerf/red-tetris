@@ -42,7 +42,8 @@ class Game {
 	startGame(seed: number): void {
 		this.terrain = new Terrain(this.params.sizeRow, this.params.sizeColumn);
 		this.tetrimo = new Tetrimino(seed, this.params.sizeColumn);
-		this.nextTetrimo = new Tetrimino(this.tetrimo.seed, this.params.sizeColumn);
+		this.nextTetrimo = new Tetrimino(seed, this.params.sizeColumn);
+		this.nextTetrimo.newPiece();
 		this.score = 0;
 		clearInterval(this.intervalId);
 		this.isStart = true;

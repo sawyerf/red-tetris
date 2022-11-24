@@ -28,12 +28,33 @@ class Terrain {
 		}));
 	}
 
+	addMalus(malus: number) {
+		for (let index:number = 0; index < malus; index++) {
+			const newLine = new Array(this.sizeColumn);
+
+			newLine.fill(8);
+			this.terrain.splice(0, 1);
+			this.terrain.push(newLine);
+		}
+	}
+
+	delMalus(minus: number) {
+		for (let index = 0; index < minus; index++) {
+			if (this.terrain[this.sizeRow - 1].every((block) => block == 8)) {
+				let newRow = new Array(this.sizeColumn);
+				newRow.fill(0);
+				this.terrain.splice(this.sizeRow - 1, 1);
+				this.terrain.unshift(newRow);
+			}
+		}
+	}
+
 	delFullLine(): number {
 		let lenRow: number = this.terrain.length;
 		let score: number = 0;
 
 		for (let indexRow = lenRow - 1; indexRow >= 0; indexRow--) {
-			if (this.terrain[indexRow].every((block) => block)) {
+			if (this.terrain[indexRow].every((block) => block && block != 8)) {
 				let newRow = new Array(this.sizeColumn);
 				score++;
 				newRow.fill(0);

@@ -5,11 +5,12 @@ import { v4 } from 'uuid';
 import Terrain from './Terrain';
 import Tetrimino from './Tetrimino';
 import type { TokenPayload } from '../socket/token';
-import { Params } from './Room';
+import Room, { Params } from './Room';
 
 class Game {
 	uid: string;
 	isStart: boolean = false;
+	room: Room;
 	// Terrain & Tetri
 	terrain: Terrain = new Terrain(0, 0);
 	tetrimo: Tetrimino = new Tetrimino(0, 1);
@@ -29,7 +30,8 @@ class Game {
 	socketMe: Socket;
 	isAdmin: boolean;
 
-	constructor(socket: BroadcastOperator<any, any>, socketMe: Socket, infoPlayer: TokenPayload, isAdmin: boolean, params: Params) {
+
+	constructor(socket: BroadcastOperator<any, any>, socketMe: Socket, infoPlayer: TokenPayload, isAdmin: boolean, params: Params, room: Room) {
 		this.uid = v4();
 		this.socket = socket;
 		this.socketMe = socketMe;
@@ -37,6 +39,7 @@ class Game {
 		this.isAdmin = isAdmin;
 		this.intervalTime = params.speedStart;
 		this.params = params;
+		this.room = room;
 	}
 
 	startGame(seed: number): void {
@@ -98,6 +101,8 @@ class Game {
 				this.intervalTime -= appendScore * 10;
 				if (this.intervalTime < this.params.speedMin) this.intervalTime = this.params.speedMin;
 				this.intervalId = setInterval(() => { this.fallPiece() }, this.intervalTime);
+				this.room.addMalus(appendScore - 1, this.infoPlayer.idPlayer);
+				this.terrain.delMalus(appendScore - 1);
 			}
 			this.score += appendScore;
 			if (this.terrain.isPossible(this.nextTetrimo) == false) {
@@ -112,6 +117,10 @@ class Game {
 		}
 		this.tetrimo.fall();
 		this.sendTerrainMe();
+	}
+
+	addMalus(malus: number) {
+		this.terrain.addMalus(malus);
 	}
 
 	fallPilePiece(): void {

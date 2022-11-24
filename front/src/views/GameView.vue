@@ -55,8 +55,8 @@ const infoPlayer: Ref<{numberPlayer: string, names: string[]}> = ref({numberPlay
 const io = connectSocket();
 
 const calcSizeWidth = (terrainCalc: number[][], sizeHeight: number): string => {
-	const sizeColumn = terrainCalc[0].length;
-	const sizeRow = terrainCalc.length;
+	const sizeColumn = terrainCalc[0]?.length;
+	const sizeRow = terrainCalc?.length;
 	const sizeWidth = (sizeHeight * (sizeColumn + 2)) / (sizeRow + 2);
 
 	return `${sizeWidth}vh`
@@ -92,7 +92,6 @@ const socketOn = () => {
 	io.on('room/players', (data: {numberPlayer: string, names: string[]}) => {
 		infoPlayer.value = data;
 		competitors.value = [];
-		console.log(data)
 	})
 
 	io.on('game/end', (data) => {
@@ -123,6 +122,7 @@ const getLink = () => {
 	if (token) {
 		const url = `${location.protocol}//${location.host}/#${token.room}[${token.username}]`
 		navigator.clipboard.writeText(url);
+		console.log(url)
 	}
 }
 

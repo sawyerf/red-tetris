@@ -77,7 +77,7 @@ class Room {
 
 	addPlayer(socketMe: Socket, infoPlayer: TokenPayload): string {
 		if (this.games.length >= this.params.maxPlayer || this.isStart) return '';
-		const game = new Game(this.socket, socketMe, infoPlayer, !this.games.length, this.params);
+		const game = new Game(this.socket, socketMe, infoPlayer, !this.games.length, this.params, this);
 		this.games.push(game);
 		socketMe.join(this.uid)
 		console.log('new Player: ', game.uid);
@@ -121,6 +121,14 @@ class Room {
 			game.timeoutDisconnectId = setTimeout(() => {
 				if (!game.isConnect) this.leave(playerId)
 			}, 5 * 1000)
+		}
+	}
+
+	addMalus(malus: number, exceptId: string) {
+		for (const game of this.games) {
+			if (game.infoPlayer.idPlayer != exceptId) {
+				game.addMalus(malus);
+			}
 		}
 	}
 

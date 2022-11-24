@@ -120,7 +120,10 @@ class Game {
 	}
 
 	addMalus(malus: number) {
-		this.terrain.addMalus(malus);
+		if (malus > 0) {
+			this.terrain.addMalus(malus);
+			this.sendTerrainEveryone();
+		}
 	}
 
 	fallPilePiece(): void {

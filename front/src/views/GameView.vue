@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
 import type { Ref } from 'vue';
 
 import GameItem from '../components/GameItem.vue';
@@ -121,12 +121,12 @@ const getLink = () => {
 
 	if (token) {
 		const url = `${location.protocol}//${location.host}/#${token.room}[${token.username}]`
-		navigator.clipboard.writeText(url);
+		navigator.clipboard?.writeText(url);
 		console.log(url)
 	}
 }
 
-onMounted(() => {
+onBeforeMount(() => {
 	document.body.addEventListener('keydown', keyHandler);
 	socketOn();
 	io.emit('room/getPlayers');

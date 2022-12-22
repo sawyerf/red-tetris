@@ -54,7 +54,7 @@ p.info-players-game {
     grid-template-columns: repeat(auto-fill, 30%);
     width: $oponents_width;
     height: 80vh;
-    overflow: hide;
+    overflow: hidden;
 }
 
 div.opponent {

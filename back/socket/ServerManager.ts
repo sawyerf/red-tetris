@@ -148,6 +148,8 @@ class SocketManager {
 					this.payload.room = this.room.uid;
 					this.sendToken();
 					this.GameHandle();
+				} else {
+					this.room = undefined;
 				}
 			}
 			this.sendListRooms();

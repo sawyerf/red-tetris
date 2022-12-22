@@ -32,7 +32,7 @@
 <script setup lang="ts">
 import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
 import type { Ref } from 'vue';
-
+import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router'
 import GameItem from '../components/GameItem.vue';
 import Token from '@/utils/token';
 import { connectSocket } from '@/utils/socket';
@@ -53,6 +53,12 @@ const score: Ref<number> = ref(0);
 const competitors: Ref<Competitor[]> = ref(new Array());
 const infoPlayer: Ref<{numberPlayer: string, names: string[]}> = ref({numberPlayer: '0 / 6', names: []});
 const io = connectSocket();
+
+
+onBeforeRouteLeave((to: any, from: any) => {
+	io.emit('room/leave');
+})
+
 
 const calcSizeWidth = (terrainCalc: number[][], sizeHeight: number): string => {
 	const sizeColumn = terrainCalc[0]?.length;
